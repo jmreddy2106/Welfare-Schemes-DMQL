@@ -7,3 +7,5 @@
 Data modeling and query lanuage
 
 ![Image](proj_dmql.png)
+
+Database schema created using <a href="https://dbschema.com/">DBSchema</a> tool.
