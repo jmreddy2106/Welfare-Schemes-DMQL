@@ -12,7 +12,8 @@ const sequelize = new Sequelize(databaseConfig.database, databaseConfig.username
     },
     define: {
         timestamps: false
-    }
+    },
+    logging: false
 });
 const db = {};
 db.Sequelize = Sequelize;

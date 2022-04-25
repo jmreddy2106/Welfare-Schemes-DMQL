@@ -8,6 +8,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Set view engine to ejs
+app.set("view engine", "ejs");
+app.set("views", "./views");
+app.use(express.static("./public"));
+
 // Import routes
 const routes = require("./routes");
 app.use("/", routes);
