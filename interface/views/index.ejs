@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+  </head>
+
+  <body>
+    <%- include('partials/navbar') %>
+    <table class="ui selectable table">
+      <thead>
+        <tr>
+          <th>Citizen ID</th>
+          <th>First Name</th>
+          <th>Middle Name</th>
+          <th>Last Name</th>
+          <th>Address</th>
+          <th>Mobile Number</th>
+          <th>Date of Birth</th>
+          <th>Gender</th>
+          <th>Marital Status</th>
+          <th>Disabled</th>
+          <th>Disabled Percentage</th>
+          <th>Caste</th>
+          <th>Village ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for(var i=0; i < citizens.length; i++) { %>
+        <tr>
+          <td><%= citizens[i].citizen_id %></td>
+          <td><%= citizens[i].first_name %></td>
+          <td>
+            <%= citizens[i].middle_name ? citizens[i].middle_name : '-' %>
+          </td>
+          <td><%= citizens[i].last_name %></td>
+          <td><%= citizens[i].address %></td>
+          <td><%= citizens[i].mobile_num %></td>
+          <td><%= citizens[i].dob %></td>
+          <td><%= citizens[i].gender %></td>
+          <td><%= citizens[i].marital_status %></td>
+          <td><%= citizens[i].disabled %></td>
+          <td><%= citizens[i].disbaled_percentage %></td>
+          <td><%= citizens[i].caste %></td>
+          <td><%= citizens[i].village_id %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </body>
+</html>
