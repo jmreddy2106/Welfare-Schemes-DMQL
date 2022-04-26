@@ -1,25 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      table,
-      th,
-      td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        padding: 4px 8px;
-      }
-    </style>
+    <%- include('partials/head') %>
   </head>
 
   <body>
-    <h1><%= title %></h1>
-    <!-- Print Citizens data in table -->
-    <table>
+    <%- include('partials/navbar') %>
+    <table class="ui selectable table">
       <thead>
         <tr>
           <th>Citizen ID</th>
@@ -42,7 +29,9 @@
         <tr>
           <td><%= citizens[i].citizen_id %></td>
           <td><%= citizens[i].first_name %></td>
-          <td><%= citizens[i].middle_name ? citizens[i].middle_name : '-' %></td>
+          <td>
+            <%= citizens[i].middle_name ? citizens[i].middle_name : '-' %>
+          </td>
           <td><%= citizens[i].last_name %></td>
           <td><%= citizens[i].address %></td>
           <td><%= citizens[i].mobile_num %></td>
@@ -57,10 +46,5 @@
         <% } %>
       </tbody>
     </table>
-    <script>
-      // Print the result of the sequelize query in the console - variable is 'citizens'
-      const citizens = <%- JSON.stringify(citizens) %>;
-      console.log(citizens);
-    </script>
   </body>
 </html>
