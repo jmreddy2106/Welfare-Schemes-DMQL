@@ -7,7 +7,6 @@ if (token) {
         }
     }).then(response => {
         if (response.status === 200) {
-            console.log(response.json());
             $('#loginButton').hide();
             $('#logoutButton').show();
         } else {

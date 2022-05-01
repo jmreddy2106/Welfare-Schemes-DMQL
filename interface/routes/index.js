@@ -8,8 +8,12 @@ router.use('/api', api);
 
 
 router.get('/', (req, res) => {
-    res.render('index', {
-        title: 'Home Page'
+    Promise.all([citizensController.findGenderDistribution()]).then(results => {
+        const [genderDistribution] = results;
+        res.render('index', {
+            title: 'Home Page',
+            genderDistribution
+        });
     });
 });
 
