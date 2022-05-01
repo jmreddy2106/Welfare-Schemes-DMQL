@@ -6,13 +6,19 @@ const api = require('./api');
 // Setup api routes
 router.use('/api', api);
 
-// Setup main route
-router.get("/", (req, res) => {
+
+router.get('/', (req, res) => {
+    res.render('index', {
+        title: 'Home Page'
+    });
+});
+
+router.get("/citizens", (req, res) => {
     // Get the citizens from the database
     citizensController.findXCitizens().then(citizens => {
-        res.render("index", {
+        res.render("citizens", {
             citizens: citizens,
-            title: "Home"
+            title: "Citizens Data"
         });
     });
 });

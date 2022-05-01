@@ -45,44 +45,11 @@
   <div class="right menu">
     <div class="item">
       <div class="ui icon input">
-        <input type="text" placeholder="Search...">
+        <input type="text" placeholder="Search..." />
         <i class="search link icon"></i>
       </div>
     </div>
-    <a class="ui item loginButton">
-      Log in
-    </a>
+    <a class="ui item loginButton" id="loginButton"> Log in </a>
+    <a class="ui item loginButton" id="logoutButton" onclick="logout(event)"> Log out</a>
   </div>
 </div>
-<div class="ui modal login">
-  <i class="close icon"></i>
-  <div class="header">
-    Log in to continue
-  </div>
-  <div class="ui padded container segment" style="border: none; box-shadow: none;">
-    <div class="ui form ">
-    <div class="field">
-      <label>Username</label>
-      <input type="text" placeholder="Username">
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" placeholder="Password">
-    </div>
-  </div>
-  </div>
-  
-  <div class="actions">
-    <div class="ui black deny button">
-      Cancel
-    </div>
-    <div class="ui positive right labeled icon button">
-      Continue
-      <i class="checkmark icon"></i>
-    </div>
-  </div>
-</div>
-<script>
-  $(".ui.dropdown").dropdown();
-  $(".login.modal").modal("attach events", ".loginButton", "show");
-</script>

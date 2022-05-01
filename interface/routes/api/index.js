@@ -5,8 +5,9 @@ const jwt = require("jsonwebtoken");
 const bcyrpt = require("bcryptjs");
 const userController = require("../../controllers/users.controller");
 const { verifyJWT } = require("../../functions");
+require('dotenv').config();
 
-router.get("/verify", (req, res) => {
+router.post("/verify", (req, res) => {
   // get token from auth header
   console.log(req.headers)
   const token = req.headers.authorization;
@@ -62,7 +63,7 @@ router.post("/login", (req, res) => {
       };
       jwt.sign(
         payload,
-        process.env.SECRET_KEY,
+        process.env.JWT_SECRET,
         {
           expiresIn: 3600,
         },

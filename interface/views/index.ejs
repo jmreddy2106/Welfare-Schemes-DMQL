@@ -5,46 +5,61 @@
   </head>
 
   <body>
+    <div class="ui modal login">
+      <i class="close icon"></i>
+      <div class="header">Log in to continue</div>
+      <div
+        class="ui padded container segment"
+        style="border: none; box-shadow: none"
+      >
+        <form class="ui form" method="post" onsubmit="login(event)">
+          <div class="field">
+            <label>Username</label>
+            <input
+              placeholder="Username"
+              name="username"
+              type="text"
+              autocomplete="off"
+              id="username"
+            />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="password"
+              id="password"
+            />
+          </div>
+          <div class="ui primary submit button" id="submit">Submit</div>
+          <div class="ui error message"></div>
+        </form>
+      </div>
+    </div>
     <%- include('partials/navbar') %>
-    <table class="ui selectable table">
-      <thead>
-        <tr>
-          <th>Citizen ID</th>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Last Name</th>
-          <th>Address</th>
-          <th>Mobile Number</th>
-          <th>Date of Birth</th>
-          <th>Gender</th>
-          <th>Marital Status</th>
-          <th>Disabled</th>
-          <th>Disabled Percentage</th>
-          <th>Caste</th>
-          <th>Village ID</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for(var i=0; i < citizens.length; i++) { %>
-        <tr>
-          <td><%= citizens[i].citizen_id %></td>
-          <td><%= citizens[i].first_name %></td>
-          <td>
-            <%= citizens[i].middle_name ? citizens[i].middle_name : '-' %>
-          </td>
-          <td><%= citizens[i].last_name %></td>
-          <td><%= citizens[i].address %></td>
-          <td><%= citizens[i].mobile_num %></td>
-          <td><%= citizens[i].dob %></td>
-          <td><%= citizens[i].gender %></td>
-          <td><%= citizens[i].marital_status %></td>
-          <td><%= citizens[i].disabled %></td>
-          <td><%= citizens[i].disbaled_percentage %></td>
-          <td><%= citizens[i].caste %></td>
-          <td><%= citizens[i].village_id %></td>
-        </tr>
-        <% } %>
-      </tbody>
-    </table>
+    <div class="ui main container segment">
+      <div class="ui cards">
+        <div class="card">
+          <div class="content">
+            <div class="header">Citizens</div>
+            <div class="description">
+              Provides the details of all the citizens in the database
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="ui basic green button" onclick="route('citizens')">
+              View Data
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
+  <%- include('partials/scripts') %>
+  <script>
+    $(".ui.dropdown").dropdown();
+    $(".login.modal").modal("attach events", ".loginButton", "show");
+  </script>
+  <script src="/login.js"></script>
 </html>
