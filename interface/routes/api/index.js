@@ -5,11 +5,10 @@ const jwt = require("jsonwebtoken");
 const bcyrpt = require("bcryptjs");
 const userController = require("../../controllers/users.controller");
 const { verifyJWT } = require("../../functions");
-require('dotenv').config();
+require("dotenv").config();
 
 router.post("/verify", (req, res) => {
   // get token from auth header
-  console.log(req.headers)
   const token = req.headers.authorization;
   // verify token
   const decoded = verifyJWT(token.replace("Bearer ", ""));
