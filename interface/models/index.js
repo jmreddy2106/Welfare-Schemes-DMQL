@@ -18,7 +18,9 @@ const sequelize = new Sequelize(databaseConfig.database, databaseConfig.username
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+db.users = require('./users.model')(Sequelize, sequelize);
 db.citizens = require('./citizens.model.js')(Sequelize, sequelize);
 db.village_master = require('./village_master.model.js')(Sequelize, sequelize);
+db.bank_master = require('./bank_master.model.js')(Sequelize, sequelize);
 
 module.exports = db;

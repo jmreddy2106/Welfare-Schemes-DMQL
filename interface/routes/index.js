@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const citizensController = require("../controllers/citizens.controller");
+const api = require('./api');
 
-// Setup Hello World route
+// Setup api routes
+router.use('/api', api);
+
+// Setup main route
 router.get("/", (req, res) => {
     // Get the citizens from the database
     citizensController.findXCitizens().then(citizens => {
         res.render("index", {
             citizens: citizens,
-            title: "Hello World"
+            title: "Home"
         });
     });
 });
