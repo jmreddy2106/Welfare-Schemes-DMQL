@@ -1,5 +1,5 @@
 <div class="ui menu">
-  <a class="item active"> Home </a>
+  <a class="item"> Home </a>
   <div class="ui pointing dropdown link item">
     <span class="text">View Data</span>
     <i class="dropdown icon"></i>
@@ -42,7 +42,16 @@
       </div>
     </div>
   </div>
+  <div class="right menu">
+    <div class="item">
+      <div class="ui icon input">
+        <input type="text" placeholder="Search..." />
+        <i class="search link icon"></i>
+      </div>
+    </div>
+    <a class="ui item loginButton" id="loginButton"> Log in </a>
+    <a class="ui item loginButton" id="logoutButton" onclick="logout(event)">
+      Log out</a
+    >
+  </div>
 </div>
-<script>
-  $(".ui.dropdown").dropdown();
-</script>

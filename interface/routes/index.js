@@ -1,14 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const citizensController = require("../controllers/citizens.controller");
+const api = require('./api');
 
-// Setup Hello World route
-router.get("/", (req, res) => {
+// Setup api routes
+router.use('/api', api);
+
+
+router.get('/', (req, res) => {
+    Promise.all([citizensController.findGenderDistribution()]).then(results => {
+        const [genderDistribution] = results;
+        res.render('index', {
+            title: 'Home Page',
+            genderDistribution
+        });
+    });
+});
+
+router.get("/citizens", (req, res) => {
     // Get the citizens from the database
     citizensController.findXCitizens().then(citizens => {
-        res.render("index", {
+        res.render("citizens", {
             citizens: citizens,
-            title: "Hello World"
+            title: "Citizens Data"
         });
     });
 });

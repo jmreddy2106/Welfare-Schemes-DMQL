@@ -1,14 +1,15 @@
+require('dotenv').config();
 module.exports = {
     // The name of the database
-    database: 'WelfareSchemes',
+    database: process.env.DATABASE,
     // The username used to connect to the database
-    username: 'postgres',
+    username: process.env.USERNAME,
     // The password used to connect to the database
-    password: 'lucifer',
+    password: process.env.PASSWORD,
     // The dialect of the database you are connecting to
     dialect: 'postgres',
     // The host of the database
-    host: 'localhost',
+    host: process.env.HOST,
     // The port of the database
     port: 5432,
     // Setup pool of connections to the database
