@@ -1,51 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
+<script>
+
+    function editCitizensRecord(citizen) {
+      $(".edit.modal").modal("show");
+      $("#address").val(citizen.address);
+      $("#mobilenumber").val(citizen.mobile_num);
+      $("#dob").val(citizen.dob);
+      $("#marital_status").val(citizen.marital_status);
+      $('#villagename').val(citizen.village_name); 
+
+    }
+
+    function editCitizen(event) {
+      event.preventDefault();
+      var data = {
+        address: $("#address").val(),
+        mobilenumber: $("#mobilenumber").val(),
+        dob: $("#dob").val(),
+        marital_status: $("#marital_status").val(),
+        villagename: $("#villagename").val(),
+      };
+      $.ajax({
+        url: "/citizen/edit",
+        type: "POST",
+        data: data,
+        success: function(response) {
+          console.log(response);
+          $(".edit.modal").modal("hide");
+          location.reload();
+        }
+      });
+    }
+
+</script>
+
   <head>
     <%- include('partials/head') %>
   </head>
 
   <body>
+    <div class="ui modal edit">
+      <i class="close icon"></i>
+      <div class="header">Log in to continue</div>
+      <div
+        class="ui padded container segment"
+        style="border: none; box-shadow: none"
+      >
+        <div class="ui form">
+          <div class="field">
+            <label>Address</label>
+            <input
+              placeholder="Address"
+              name="address"
+              type="text"
+              autocomplete="off"
+              id="address"
+            />
+          </div>
+          <div class="field">
+            <label>Mobile Number</label>
+            <input
+              type="text"
+              name="mobile_number"
+              placeholder="Mobuile Number"
+              id="mobilenumber"
+            />
+          </div>
+          <div class="field">
+            <label>Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              placeholder="DOB"
+              id="dob"
+            />
+          </div>
+          <div class="field">
+            <label>Marital Status</label>
+            <select class="ui dropdown" id="marital_status">
+              <option value="M">Married</option>
+              <option value="UM">Unmarried</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Village Name</label>
+            <input
+              type="text"
+              name="village"
+              placeholder="Village Name"
+              id="villagename"
+            />
+          </div>
+
+          <div class="ui primary button" id="submit">Submit</div>
+          <div class="ui error message"></div>
+        </div>
+      </div>
+    </div>
+
     <%- include('partials/navbar') %>
-    <table class="ui selectable table">
+    <table class="ui selectable table" style="padding: 2%">
       <thead>
         <tr>
-          <th>Citizen ID</th>
+          <!-- <th>Citizen ID</th> -->
           <th>First Name</th>
-          <th>Middle Name</th>
+          <!-- <th>Middle Name</th> -->
           <th>Last Name</th>
           <th>Address</th>
           <th>Mobile Number</th>
           <th>Date of Birth</th>
           <th>Gender</th>
           <th>Marital Status</th>
-          <th>Disabled</th>
-          <th>Disabled Percentage</th>
-          <th>Caste</th>
-          <th>Village ID</th>
+          <!-- <th>Disabled</th>
+          <th>Disabled Percentage</th> -->
+          <!-- <th>Caste</th> -->
+          <th>Village Name</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <% for(var i=0; i < citizens.length; i++) { %>
         <tr>
-          <td><%= citizens[i].citizen_id %></td>
+          <!-- <td><%= citizens[i].citizen_id %></td> -->
           <td><%= citizens[i].first_name %></td>
-          <td>
+          <!-- <td>
             <%= citizens[i].middle_name ? citizens[i].middle_name : '-' %>
-          </td>
+          </td> -->
           <td><%= citizens[i].last_name %></td>
           <td><%= citizens[i].address %></td>
           <td><%= citizens[i].mobile_num %></td>
           <td><%= citizens[i].dob %></td>
           <td><%= citizens[i].gender %></td>
           <td><%= citizens[i].marital_status %></td>
-          <td><%= citizens[i].disabled %></td>
-          <td><%= citizens[i].disbaled_percentage %></td>
-          <td><%= citizens[i].caste %></td>
-          <td><%= citizens[i].village_id %></td>
+         <!-- <td><%= citizens[i].disabled %></td> -->
+          <!-- <td><%= citizens[i].disbaled_percentage %></td> -->
+          <!-- <td><%= citizens[i].caste %></td> -->
+          <td><%= citizens[i].village_name %></td>
+          <td>
+            <div class="ui teal buttons">
+              <div class="ui button" onclick="editCitizensRecord(<%=JSON.stringify(citizens[i])%>)">Edit</div>
+              <div class="ui floating dropdown icon button">
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                  <div class="item" onclick="deleteCitizenRecord(<%= JSON.stringify(citizens[i])%>)"><i class="delete icon"></i> Delete</div>
+                </div>
+              </div>
+            </div>
+          </td>
         </tr>
         <% } %>
       </tbody>
     </table>
   </body>
   <%- include('partials/scripts') %>
+
 </html>

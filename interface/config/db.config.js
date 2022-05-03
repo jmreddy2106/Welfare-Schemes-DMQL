@@ -3,7 +3,7 @@ module.exports = {
     // The name of the database
     database: process.env.DATABASE,
     // The username used to connect to the database
-    username: process.env.USERNAME,
+    username: process.env.USER,
     // The password used to connect to the database
     password: process.env.PASSWORD,
     // The dialect of the database you are connecting to
