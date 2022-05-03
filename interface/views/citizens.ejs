@@ -1,42 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-<script>
-
-    function editCitizensRecord(citizen) {
-      $(".edit.modal").modal("show");
-      $("#address").val(citizen.address);
-      $("#mobilenumber").val(citizen.mobile_num);
-      $("#dob").val(citizen.dob);
-      $("#marital_status").val(citizen.marital_status);
-      $('#villagename').val(citizen.village_name); 
-
-    }
-
-    function editCitizen(event) {
-      event.preventDefault();
-      var data = {
-        address: $("#address").val(),
-        mobilenumber: $("#mobilenumber").val(),
-        dob: $("#dob").val(),
-        marital_status: $("#marital_status").val(),
-        villagename: $("#villagename").val(),
-      };
-      $.ajax({
-        url: "/citizen/edit",
-        type: "POST",
-        data: data,
-        success: function(response) {
-          console.log(response);
-          $(".edit.modal").modal("hide");
-          location.reload();
-        }
-      });
-    }
-
-</script>
-
   <head>
     <%- include('partials/head') %>
   </head>
@@ -44,12 +7,12 @@
   <body>
     <div class="ui modal edit">
       <i class="close icon"></i>
-      <div class="header">Log in to continue</div>
+      <div class="header">Editing Citizen (<span id="citizen_id"></span>)</div>
       <div
         class="ui padded container segment"
         style="border: none; box-shadow: none"
       >
-        <div class="ui form">
+        <form class="ui form" method="post" onsubmit="editCitizen(event)">
           <div class="field">
             <label>Address</label>
             <input
@@ -65,18 +28,13 @@
             <input
               type="text"
               name="mobile_number"
-              placeholder="Mobuile Number"
-              id="mobilenumber"
+              placeholder="Mobile Number"
+              id="mobile_number"
             />
           </div>
           <div class="field">
             <label>Date of Birth</label>
-            <input
-              type="date"
-              name="dob"
-              placeholder="DOB"
-              id="dob"
-            />
+            <input type="date" name="dob" placeholder="DOB" id="dob" />
           </div>
           <div class="field">
             <label>Marital Status</label>
@@ -85,24 +43,14 @@
               <option value="UM">Unmarried</option>
             </select>
           </div>
-          <div class="field">
-            <label>Village Name</label>
-            <input
-              type="text"
-              name="village"
-              placeholder="Village Name"
-              id="villagename"
-            />
-          </div>
-
-          <div class="ui primary button" id="submit">Submit</div>
+          <div class="ui primary button" id="editCitizen">Submit</div>
           <div class="ui error message"></div>
-        </div>
+        </form>
       </div>
     </div>
 
     <%- include('partials/navbar') %>
-    <table class="ui selectable table" style="padding: 2%">
+    <table class="ui selectable table">
       <thead>
         <tr>
           <!-- <th>Citizen ID</th> -->
@@ -135,17 +83,27 @@
           <td><%= citizens[i].dob %></td>
           <td><%= citizens[i].gender %></td>
           <td><%= citizens[i].marital_status %></td>
-         <!-- <td><%= citizens[i].disabled %></td> -->
+          <!-- <td><%= citizens[i].disabled %></td> -->
           <!-- <td><%= citizens[i].disbaled_percentage %></td> -->
           <!-- <td><%= citizens[i].caste %></td> -->
           <td><%= citizens[i].village_name %></td>
           <td>
             <div class="ui teal buttons">
-              <div class="ui button" onclick="editCitizensRecord(<%=JSON.stringify(citizens[i])%>)">Edit</div>
+              <div
+                class="ui button"
+                onclick="editCitizensRecord('<%=JSON.stringify(citizens[i])%>')"
+              >
+                Edit
+              </div>
               <div class="ui floating dropdown icon button">
                 <i class="dropdown icon"></i>
                 <div class="menu">
-                  <div class="item" onclick="deleteCitizenRecord(<%= JSON.stringify(citizens[i])%>)"><i class="delete icon"></i> Delete</div>
+                  <div
+                    class="item"
+                    onclick="deleteCitizenRecord('<%= JSON.stringify(citizens[i])%>')"
+                  >
+                    <i class="delete icon"></i> Delete
+                  </div>
                 </div>
               </div>
             </div>
@@ -156,5 +114,5 @@
     </table>
   </body>
   <%- include('partials/scripts') %>
-
+  <script src="/citizens.js"></script>
 </html>

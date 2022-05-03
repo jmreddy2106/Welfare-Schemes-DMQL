@@ -1,4 +1,3 @@
-
 module.exports = (Sequelize, sequelize) => {
   const Citizens = sequelize.define("citizens", {
     citizen_id: {

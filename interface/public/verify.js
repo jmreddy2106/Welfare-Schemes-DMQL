@@ -10,7 +10,10 @@ if (token) {
             $('#loginButton').hide();
             $('#logoutButton').show();
         } else {
-            window.location.href = "/";
+            localStorage.removeItem("token");
+            if (window.location.pathname !== "/") {
+                window.location.href = "/";
+            }
             $('#loginButton').show();
             $('#logoutButton').hide();
         }
