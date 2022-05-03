@@ -18,4 +18,38 @@ router.post('/edit', (req, res) => {
     }
 });
 
+
+router.post('/delete', (req, res) => {
+    const { citizen_id } = req.body;
+    if (!citizen_id) {
+        res.status(400).json({ message: "Please fill in all fields" });
+    } else {
+        citizensController.deleteCitizenbyId(citizen_id)
+            .then(() => {
+                res.status(200).json({ message: "Citizen deleted successfully" });
+            })
+            .catch((err) => {
+                res.status(400).json({ message: err });
+            });
+    }
+} );
+
+
+router.post('/validate', (req, res) => {
+    const { citizen_id } = req.body;
+    if (!citizen_id) {
+        res.status(400).json({ message: "Please fill in all fields" });
+    } else {
+        citizensController.checkCitizenId(citizen_id)
+            .then(( isValid ) => {
+                res.status(200).json({ isValid: !isValid });
+            }       
+    )
+    .catch((err) => {
+                res.status(400).json({ message: err });
+            });
+    }
+});
+
+
 module.exports = router;

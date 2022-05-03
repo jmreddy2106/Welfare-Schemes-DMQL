@@ -3,10 +3,12 @@ const router = express.Router();
 const citizensController = require("../controllers/citizens.controller");
 const api = require('./api');
 const citizensAPI = require('./api/citizens');
+const geographyAPI = require('./api/geography');
 
 // Setup api routes
 router.use('/api', api);
 router.use('/api/citizens', citizensAPI);
+router.use('/api/geography', geographyAPI);
 
 
 router.get('/', (req, res) => {
@@ -28,6 +30,15 @@ router.get("/citizens", (req, res) => {
         });
     });
 });
+
+
+router.get("/addUser", (req, res) => {
+    res.render("addUser", {
+        title: "Add User"
+        });
+    }
+);
+
 
 // export the router
 module.exports = router;

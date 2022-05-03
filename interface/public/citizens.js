@@ -41,3 +41,18 @@ function editCitizen(event) {
     },
   });
 }
+
+function deleteCitizenRecord(citizen) {
+  citizen_id = JSON.parse(citizen).citizen_id;
+  $.ajax({
+    url: "/api/citizens/delete",
+    type: "POST",
+    data: { citizen_id },
+    success: function (response) {
+      console.log(response);
+      location.reload();
+    }
+  });
+
+  
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+  </head>
+
+   <body>
+        
+    <%- include('partials/navbar') %>
+    
+    <div class="ui container segment" >
+    <form class="ui form" method="post" onsubmit="editCitizen(event)" >
+        <div class="field">
+            <label>Citizen ID</label>
+            <input
+              placeholder="Citizen ID"
+              name="citizen_id"
+              type="text"
+              autocomplete="off"
+              id="citizen_id"
+            />
+          </div>
+          <div class="field">
+            <label>First Name</label>
+            <input
+              placeholder="First Name"
+              name="first_name"
+              type="text"
+              autocomplete="off"
+              id="first_name">
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input
+              placeholder="Last Name"
+              name="last_name"
+              type="text"
+              autocomplete="off"
+              id="last_name">
+          <div>
+        <div class="field">
+          <label>Address</label>
+          <input
+            placeholder="Address"
+            name="address"
+            type="text"
+            autocomplete="off"
+            id="address"
+          />
+        </div>
+        <div class="field">
+          <label>Mobile Number</label>
+          <input
+            type="text"
+            name="mobile_number"
+            placeholder="Mobile Number"
+            id="mobile_number"
+          />
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date" name="dob" placeholder="DOB" id="dob" />
+        </div>
+        <div class="field">
+          <label>Marital Status</label>
+          <select class="ui dropdown" id="marital_status">
+            <option value="M">Married</option>
+            <option value="UM">Unmarried</option>
+          </select>
+        </div>
+        <div class = "field">
+          <label>disabled</label>
+            <select class="ui dropdown" id="disabled">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+        <div class="field">
+          <label>Disabled Percentage</label>
+          <input
+            type="text"
+            name="disabled_percentage"
+            placeholder="Disabled Percentage"
+            id="disabled_percentage"
+          />
+        </div>
+        <div class="field">
+          <label>Caste</label>
+          <input
+            type="text"
+            name="caste"
+            placeholder="Caste"
+            id="caste"
+          />
+        </div>
+        
+        <div class="field">
+          <label>State</label>
+          <select class="ui dropdown" id="state">
+        </select>
+        </div>
+        <div class="field">
+            <label>District</label>
+            <select class="ui dropdown" id="district">
+            </select>
+          </div>
+          <div class="field">
+              <lable>Mandal</lable>
+                <select class="ui dropdown" id="mandal">
+                </select>
+          </div>
+          <div class="field">
+            <label>Village Name</label>
+            <select class="ui dropdown" id="village">
+            </select>
+          </div>
+  
+
+
+
+
+
+
+        <div class="ui primary button" id="editCitizen">Submit</div>
+        <div class="ui error message"></div>
+      </form>
+
+    </div>
+
+  </body>
+  <%- include('partials/scripts') %>
+
+  <script>
+    //gereate random data with Upper case letter with seven digit number
+    function generateCitizenId() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var possible2 = "0123456789";
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        for (var i = 0; i < 7; i++)
+
+            text += possible2.charAt(Math.floor(Math.random() * possible2.length));
+        
+        //validate user name with database
+        fetch("/api/citizens/validate", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify({citizen_id: text})
+            }).then(res => {
+                if(res.status == 200){
+                    document.getElementById("citizen_id").value = text;
+                }
+                else{
+                    generateCitizenId();
+                }
+        });
+
+    }
+    
+    generateCitizenId();
+
+
+</script>
+
+</html>

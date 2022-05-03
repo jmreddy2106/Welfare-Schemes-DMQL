@@ -15,6 +15,15 @@ exports.findXCitizens = () => {
   return sequelize.query(query, { type: QueryTypes.SELECT })
 };
 
+
+exports.deleteCitizenbyId = (citizen_id) =>{
+
+  return citizens.destroy({
+    where: { citizen_id }
+  })
+
+};
+
 exports.editCitizen = (citizen_id, address, mobile_num, dob, marital_status) => {
   return citizens.update({
     address, mobile_num, dob, marital_status
@@ -24,6 +33,23 @@ exports.editCitizen = (citizen_id, address, mobile_num, dob, marital_status) => 
     }
   });
 };
+
+//Check Citizen exists or not
+exports.checkCitizenId = (citizen_id) => {
+  return citizens.findOne({
+    where: {
+      citizen_id
+    }
+  }).then(
+    citizen_id => {
+      if (citizen_id) {
+        return true;
+      }
+      return false;
+    }
+  )
+}
+
 
 // Get total number of male and female citizens
 exports.findGenderDistribution = () => {
