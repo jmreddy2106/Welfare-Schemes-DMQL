@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const citizensController = require("../controllers/citizens.controller");
 const api = require('./api');
+const citizensAPI = require('./api/citizens');
 
 // Setup api routes
 router.use('/api', api);
+router.use('/api/citizens', citizensAPI);
 
 
 router.get('/', (req, res) => {
