@@ -18,13 +18,13 @@ const pageLeft = $('#pageLeft');
 const pageRight = $('#pageRight');
 if (page > 1) {
   pageLeft.removeClass("disabled");
-  pageLeft.attr("href", `/citizens?page=${page - 1}&limit=${limit}`);
+  pageLeft.attr("href", `/citizens?page=${parseInt(page) - 1}&limit=${limit}`);
 } else {
   pageLeft.addClass("disabled");
 }
 if (page < numberOfPages) {
   pageRight.removeClass("disabled");
-  pageRight.attr("href", `/citizens?page=${page + 1}&limit=${limit}`);
+  pageRight.attr("href", `/citizens?page=${parseInt(page) + 1}&limit=${limit}`);
 } else {
   pageRight.addClass("disabled");
 }

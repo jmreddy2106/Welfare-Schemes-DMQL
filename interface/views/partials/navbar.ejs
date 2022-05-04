@@ -33,17 +33,23 @@
         <i class="dropdown icon"></i>
         <span class="text">Transactions</span>
         <div class="menu">
-          <div class="item">Agricultural</div>
-          <div class="item">Hospital</div>
-          <div class="item">LPG</div>
-          <div class="item">NRegs</div>
-          <div class="item">Pension</div>
+          <div class="item" onclick="route('/transactions/agriculture')">
+            Agricultural
+          </div>
+          <div class="item" onclick="route('/transactions/hospital')">
+            Hospital
+          </div>
+          <div class="item" onclick="route('/transactions/lpg')">LPG</div>
+          <div class="item" onclick="route('/transactions/nregs')">NRegs</div>
+          <div class="item" onclick="route('/transactions/pension')">Pension</div>
         </div>
       </div>
     </div>
   </div>
 
-  <a class="item" onclick="route('beneficiaries')"> Scheme Wise Beneficiaries </a>
+  <a class="item" onclick="route('beneficiaries')">
+    Scheme Wise Beneficiaries
+  </a>
   <a class="item" onclick="route('addUser')"> Add User </a>
 
   <div class="right menu">
