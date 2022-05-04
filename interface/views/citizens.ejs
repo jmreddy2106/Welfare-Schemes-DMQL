@@ -2,6 +2,26 @@
 <html lang="en">
   <head>
     <%- include('partials/head') %>
+    <style>
+      .ui.menu {
+        margin-top: 0;
+      }
+      .scrollY {
+        max-height: calc(100vh - 8rem);
+        margin-top: 1rem;
+        overflow-y: scroll;
+      }
+      .ui.table thead tr:first-child > th {
+        position: sticky !important;
+        top: 0;
+        z-index: 2;
+      }
+      .ui.table tfoot tr:first-child > th {
+        position: sticky !important;
+        bottom: 0;
+        z-index: 2;
+      }
+    </style>
   </head>
 
   <body>
@@ -13,7 +33,6 @@
         style="border: none; box-shadow: none"
       >
         <form class="ui form" method="post" onsubmit="editCitizen(event)">
-          
           <div class="field">
             <label>Address</label>
             <input
@@ -51,69 +70,94 @@
     </div>
 
     <%- include('partials/navbar') %>
-    <table class="ui selectable table">
-      <thead>
-        <tr>
-          <!-- <th>Citizen ID</th> -->
-          <th>First Name</th>
-          <!-- <th>Middle Name</th> -->
-          <th>Last Name</th>
-          <th>Address</th>
-          <th>Mobile Number</th>
-          <th>Date of Birth</th>
-          <th>Gender</th>
-          <th>Marital Status</th>
-          <!-- <th>Disabled</th>
-          <th>Disabled Percentage</th> -->
-          <!-- <th>Caste</th> -->
-          <th>Village Name</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for(var i=0; i < citizens.length; i++) { %>
-        <tr>
-          <!-- <td><%= citizens[i].citizen_id %></td> -->
-          <td><%= citizens[i].first_name %></td>
-          <!-- <td>
-            <%= citizens[i].middle_name ? citizens[i].middle_name : '-' %>
-          </td> -->
-          <td><%= citizens[i].last_name %></td>
-          <td><%= citizens[i].address %></td>
-          <td><%= citizens[i].mobile_num %></td>
-          <td><%= citizens[i].dob %></td>
-          <td><%= citizens[i].gender %></td>
-          <td><%= citizens[i].marital_status %></td>
-          <!-- <td><%= citizens[i].disabled %></td> -->
-          <!-- <td><%= citizens[i].disbaled_percentage %></td> -->
-          <!-- <td><%= citizens[i].caste %></td> -->
-          <td><%= citizens[i].village_name %></td>
-          <td>
-            <div class="ui teal buttons">
-              <div
-                class="ui button"
-                onclick="editCitizensRecord('<%=JSON.stringify(citizens[i])%>')"
-              >
-                Edit
-              </div>
-              <div class="ui floating dropdown icon button">
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                  <div
-                    class="item"
-                    onclick="deleteCitizenRecord('<%= JSON.stringify(citizens[i])%>')"
-                  >
-                    <i class="delete icon"></i> Delete
+
+    <!-- Drop down for selecting limit -->
+
+    <div class="ui container">
+      <div class="ui floating labeled icon dropdown button">
+        <i class="list icon"></i>
+        <span class="text">Items</span>
+        <div class="menu">
+          <div class="item" onclick="redirectToLimit(10)">10</div>
+          <div class="item" onclick="redirectToLimit(25)">25</div>
+          <div class="item" onclick="redirectToLimit(50)">50</div>
+          <div class="item" onclick="redirectToLimit(100)">100</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scrollY">
+      <table class="ui selectable table">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>Mobile Number</th>
+            <th>Date of Birth</th>
+            <th>Gender</th>
+            <th>Marital Status</th>
+            <th>Village Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < citizens.length; i++) { %>
+          <tr>
+            <td><%= citizens[i].first_name %></td>
+            <td><%= citizens[i].last_name %></td>
+            <td><%= citizens[i].address %></td>
+            <td><%= citizens[i].mobile_num %></td>
+            <td><%= citizens[i].dob %></td>
+            <td><%= citizens[i].gender %></td>
+            <td><%= citizens[i].marital_status %></td>
+            <td><%= citizens[i].village_name %></td>
+            <td>
+              <div class="ui teal buttons">
+                <div
+                  class="ui button"
+                  onclick="editCitizensRecord('<%=JSON.stringify(citizens[i])%>')"
+                >
+                  Edit
+                </div>
+                <div class="ui floating dropdown icon button">
+                  <i class="dropdown icon"></i>
+                  <div class="menu">
+                    <div
+                      class="item"
+                      onclick="deleteCitizenRecord('<%= JSON.stringify(citizens[i])%>')"
+                    >
+                      <i class="delete icon"></i> Delete
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </td>
-        </tr>
-        <% } %>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+        <!-- Display a pagination -->
+        <tfoot>
+          <tr>
+            <th colspan="9">
+              <div class="ui right floated pagination menu">
+                <a class="icon item" id="pageLeft">
+                  <i class="left chevron disabled icon"></i>
+                </a>
+
+                <a class="icon item" id="pageRight">
+                  <i class="right chevron disabled icon"></i>
+                </a>
+              </div>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </body>
   <%- include('partials/scripts') %>
+  <script>
+    const count = "<%= count %>";
+  </script>
   <script src="/citizens.js"></script>
 </html>

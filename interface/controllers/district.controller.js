@@ -10,10 +10,10 @@ exports.allDistricts = () => {
 
 exports.allDistrictsByStateId = (state_id) => {
     const query =`SELECT * FROM district_master WHERE state_id = ${state_id}`;
-    return db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT });
+    return db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT }).then(districts => {
+        if (districts) {
+            return districts;
+        }
+        return null;
+    });
 };
-
-
-
-
-
