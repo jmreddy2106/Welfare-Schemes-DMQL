@@ -3,17 +3,11 @@
   <head>
     <%- include('partials/head') %>
   </head>
-
    <body>
-        
     <%- include('partials/navbar') %>
-
-
-    
     <div class="ui container segment" >
-        <h1 style="text-align: center;">Add New Citizen</h1>
-
-    <form class="ui form" method="post" onsubmit="addCitizen(event)" >
+      <h1 style="text-align: center;">Add New Citizen</h1>
+      <form class="ui form" method="post" onsubmit="addCitizen(event)" id="citizenForm">
         <div class="field">
             <label>Citizen ID</label>
             <input
@@ -32,6 +26,15 @@
               type="text"
               autocomplete="off"
               id="first_name">
+          </div>
+          <div class="field">
+            <label>Middle Name</label>
+            <input
+              placeholder="Middle Name"
+              name="middle_name"
+              type="text"
+              autocomplete="off"
+              id="middle_name">
           </div>
           <div class="field">
             <label>Last Name</label>
@@ -66,16 +69,23 @@
           <input type="date" name="dob" placeholder="DOB" id="dob" />
         </div>
         <div class="field">
+          <label>Gender</label>
+          <select class="ui dropdown" id="gender">
+            <option value="M" selected>Male</option>
+            <option value="F">Female</option>
+          </select>
+        </div>
+        <div class="field">
           <label>Marital Status</label>
           <select class="ui dropdown" id="marital_status">
-            <option value="M">Married</option>
+            <option value="M" selected>Married</option>
             <option value="UM">Unmarried</option>
           </select>
         </div>
         <div class = "field">
           <label>Disabled</label>
             <select class="ui dropdown" id="disabled">
-                <option value="Yes">Yes</option>
+                <option value="Yes" selected>Yes</option>
                 <option value="No">No</option>
             </select>
         </div>
@@ -91,7 +101,7 @@
         <div class="field">
           <label>Caste</label>
           <select class="ui dropdown" id="caste">
-            <option value="OC" >OC</option>
+            <option value="OC" selected>OC</option>
             <option value="SC">SC</option>
             <option value="ST">ST</option>
             <option value="BC">BC</option>
@@ -128,222 +138,6 @@
   </body>
   <%- include('partials/scripts') %>
 
-  <script>
-    //gereate random data with Upper case letter with seven digit number
-    function generateCitizenId() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        var possible2 = "0123456789";
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-        for (var i = 0; i < 7; i++)
-
-            text += possible2.charAt(Math.floor(Math.random() * possible2.length));
-        
-        //validate user name with database
-        fetch("/api/citizens/validate", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({citizen_id: text})
-            }).then(res => {
-                if(res.status == 200){
-                    document.getElementById("citizen_id").value = text;
-                }
-                else{
-                    generateCitizenId();
-                }
-        });
-
-    }
-    
-    generateCitizenId();
-
-    //get all states
-    fetch("/api/geography/states", {
-        method: "GET",
-        headers: {'Content-Type': 'application/json'}
-        }).then(res => res.json()).then(data => {
-            var state = document.getElementById("state");
-            // set the first option to be the default disabled option
-            var disabledOption = document.createElement("option");
-            disabledOption.text = "Select State";
-            disabledOption.value = "undefined";
-            disabledOption.disabled = true;
-            disabledOption.selected = true;
-            $(state).dropdown('set selected', disabledOption.value);
-
-            state.add(disabledOption);
-
-            for(var i = 0; i < data.length; i++){
-                var option = document.createElement("option");
-                option.value = data[i].state_id;
-                option.text = data[i].state_name;
-                state.add(option);
-            }
-        });
-
-    //get all districts
-    document.getElementById("state").addEventListener("change", function(){
-        var state_id = document.getElementById("state").value;
-        fetch("/api/geography/districts/" + state_id, {
-            method: "GET",
-            headers: {'Content-Type': 'application/json'}
-            }).then(res => res.json()).then(data => {
-                var district = document.getElementById("district");
-                district.innerHTML = "";
-                var disabledOption = document.createElement("option");
-                disabledOption.text = "Select District";
-                disabledOption.value = "undefined";
-                disabledOption.disabled = true;
-                disabledOption.selected = true;
-                $(district).dropdown('set selected', disabledOption.value);
-
-                district.add(disabledOption);
-
-                for(var i = 0; i < data.length; i++){
-                    var option = document.createElement("option");
-                    option.value = data[i].district_id;
-                    option.text = data[i].district_name;
-                    district.add(option);
-                }
-            });
-    });
-
-    //get all mandals
-    document.getElementById("district").addEventListener("change", function(){
-        var district_id = document.getElementById("district").value;
-        fetch("/api/geography/mandals/" + district_id, {
-            method: "GET",
-            headers: {'Content-Type': 'application/json'}
-            }).then(res => res.json()).then(data => {
-                var mandal = document.getElementById("mandal");
-                mandal.innerHTML = "";
-                var disabledOption = document.createElement("option");
-                disabledOption.text = "Select Mandal";
-                disabledOption.value = "undefined";
-                disabledOption.disabled = true;
-                disabledOption.selected = true;
-                $(mandal).dropdown('set selected', disabledOption.value);
-                mandal.add(disabledOption);
-
-                
-                for(var i = 0; i < data.length; i++){
-                    var option = document.createElement("option");
-                    option.value = data[i].mandal_id;
-                    option.text = data[i].mandal_name;
-                    mandal.add(option);
-                }
-            });
-    });
-
-    //get all villages
-    document.getElementById("mandal").addEventListener("change", function(){
-        var mandal_id = document.getElementById("mandal").value;
-        fetch("/api/geography/villages/" + mandal_id, {
-            method: "GET",
-            headers: {'Content-Type': 'application/json'}
-            }).then(res => res.json()).then(data => {
-                var village = document.getElementById("village");
-                village.innerHTML = "";
-                var disabledOption = document.createElement("option");
-                disabledOption.text = "Select Village";
-                disabledOption.value = "undefined";
-                disabledOption.disabled = true;
-                disabledOption.selected = true;
-                $(village).dropdown('set selected', disabledOption.value);
-                village.add(disabledOption);
-
-                for(var i = 0; i < data.length; i++){
-                    var option = document.createElement("option");
-                    option.value = data[i].village_id;
-                    option.text = data[i].village_name;
-                    village.add(option);
-                }
-            });
-    });
-
-
-    $(".ui.form").form({
-    fields: {
-        first_name: "empty",
-        last_name: "empty",
-        address: "empty",
-        mobile_number: {
-            identifier: "mobile_number",
-            rules: [
-                {
-                    type: "length[10]",
-                    prompt: "Please enter a valid mobile number"
-                }
-            ]
-        },
-        dob: "empty",
-        marital_status: "empty",
-        disabled: "empty",
-        caste: "empty",
-        state: "empty",
-        district: "empty",
-        mandal: "empty",
-        village: "empty"
-    },
-    });
-
-    function checkMobileNumber(mobile_number){
-        var mobile_number = document.getElementById("mobile_number").value;
-        if(mobile_number.length != 10){
-           return false;
-        }
-        return true;
-    }
-
-    function addCitizen(event){
-        event.preventDefault();
-
-        if($(".ui.form").form("is valid")){
-            var formData = {
-                first_name: document.getElementById("first_name").value,
-                last_name: document.getElementById("last_name").value,
-                address: document.getElementById("address").value,
-                mobile_number: document.getElementById("mobile_number").value,
-                
-                dob: document.getElementById("dob").value,
-                marital_status: document.getElementById("marital_status").value,
-                disabled: document.getElementById("disabled").value,
-                disbaled_percentage: document.getElementById("disbaled_percentage").value,
-                caste: document.getElementById("caste").value,
-                village_id: document.getElementById("village").value,
-                citizen_id: document.getElementById("citizen_id").value
-            };
-
-            fetch("/api/citizens/addnewcitizen", {
-                method: "POST",
-                body: formData
-                }).then(res => res.json()).then(data => {
-                    if(data.status == "success"){
-                        window.location.href = "/citizens";
-                    }
-                    else{
-                        $(".ui.error.message").html(data.message);
-                    }
-            });
-        }
-
-    }
-
-    
-
-
-    document.getElementById("add_citizen").addEventListener("click", addCitizen);
-
-    document.getElementById("disabled").addEventListener("change", function(){
-        if(document.getElementById("disabled").value == "yes"){
-            document.getElementById("disbaled_percentage").disabled = false;
-        }
-        else{
-            document.getElementById("disbaled_percentage").disabled = true;
-        }
-    });
-
-
-</script>
+  <script src="/adduser.js"></script>
 
 </html>

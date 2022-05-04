@@ -64,7 +64,7 @@ router.post("/login", (req, res) => {
         payload,
         process.env.JWT_SECRET,
         {
-          expiresIn: 3600,
+          expiresIn: 60 * 60 * 24 * 7,
         },
         (err, token) => {
           if (err) throw err;
