@@ -51,7 +51,7 @@ exports.getCountOfCitizens = () => {
 };
 
 exports.deleteCitizenbyId = (citizen_id) => {
-  const query = `delete from citizens where citizen_id = ${citizen_id};`;
+  const query = `delete from citizens where citizen_id = '${citizen_id}';`;
   return sequelize.query(query, { type: QueryTypes.DELETE });
 };
 
@@ -62,13 +62,13 @@ exports.editCitizen = (
   dob,
   marital_status
 ) => {
-  const query = `update citizens set address = '${address}', mobile_num = '${mobile_num}', dob = '${dob}', marital_status = '${marital_status}' where citizen_id = ${citizen_id};`;
+  const query = `update citizens set address = '${address}', mobile_num = '${mobile_num}', dob = '${dob}', marital_status = '${marital_status}' where citizen_id = '${citizen_id}';`;
   return sequelize.query(query, { type: QueryTypes.UPDATE });
 };
 
 //Check Citizen exists or not
 exports.checkCitizenId = (citizen_id) => {
-  const query = `select * from citizens where citizen_id = ${citizen_id};`;
+  const query = `select * from citizens where citizen_id = '${citizen_id}';`;
   return sequelize
     .query(query, { type: QueryTypes.SELECT })
     .then((citizen_id) => {
