@@ -67,7 +67,8 @@ function addPageNumbers(numberOfPages) {
       firstPage.setAttribute("href", `/citizens?page=1&limit=${limit}`);
       firstPage.setAttribute("id", `page1`);
       firstPage.classList.add("item");
-      pageRight.before(firstPage);
+      pageLeft.after(dots);
+      pageLeft.after(firstPage);
     }
 
     // add last page
