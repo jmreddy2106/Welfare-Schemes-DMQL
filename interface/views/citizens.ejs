@@ -72,7 +72,7 @@
     <%- include('partials/navbar') %>
 
     <!-- Drop down for selecting limit -->
-
+    <% if(citizens.length){ %>
     <div class="ui container">
       <div class="ui floating labeled icon dropdown button">
         <i class="list icon"></i>
@@ -85,7 +85,11 @@
         </div>
       </div>
     </div>
-
+    <% } %>
+    <% if(!citizens.length){ %>
+      <h1 style="text-align: center;">No Data Found</h1>
+    <% } %>
+    <% if(citizens.length){ %>
     <div class="scrollY">
       <table class="ui selectable table">
         <thead>
@@ -154,6 +158,7 @@
         </tfoot>
       </table>
     </div>
+    <% } %>
   </body>
   <%- include('partials/scripts') %>
   <script>

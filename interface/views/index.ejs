@@ -2,6 +2,11 @@
 <html lang="en">
   <head>
     <%- include('partials/head') %>
+    <style>
+      .ui.menu {
+        margin-bottom: 0;
+      }
+    </style>
   </head>
 
   <body>
@@ -38,7 +43,18 @@
       </div>
     </div>
     <%- include('partials/navbar') %>
-    <div class="ui main container segment">
+    <div class="ui inverted vertical masthead center aligned segment" style="background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('https://media-exp1.licdn.com/dms/image/C561BAQH2gmHaPvj2UA/company-background_10000/0/1622700188261?e=2147483647&v=beta&t=cANraogFmQmMwo8_3XlLnOFTNp-sHwzNk94uezmJmIk');; background-position: 0 30%; background-repeat: no-repeat; background-size: cover;">
+      <div class="ui text container" style="margin: 8rem 0px;">
+        <h1 class="ui inverted header">
+          Unified Framework for Welfare Schemes
+        </h1>
+        <h2>Demonstrating various welfare schemes under a single dashboard</h2>
+        <div class="ui huge primary button" onclick="route('/citizens')">
+          View Citizens <i class="right arrow icon"></i>
+        </div>
+      </div>
+    </div>
+    <div class="ui main container segment" style="width: 80vw">
       <div class="ui three column grid">
         <div class="column">
           <div class="ui cards" id="genderdist"></div>
@@ -155,7 +171,6 @@
     // marital dist
     const maritalDist = JSON.parse(`<%- JSON.stringify(maritalDist) %>`);
 
-    
     var x = [];
     var y = [];
     for (var i = 0; i < maritalDist.length; i++) {
@@ -225,7 +240,7 @@
       y.push(citizenDist[i].district_dist);
     }
 
-    // plot bubble chart 
+    // plot bubble chart
     var trace6 = {
       x: x,
       y: y,
@@ -242,7 +257,5 @@
     };
     var config = { responsive: true };
     Plotly.newPlot("citizendist", data, layout, config);
-
-
   </script>
 </html>

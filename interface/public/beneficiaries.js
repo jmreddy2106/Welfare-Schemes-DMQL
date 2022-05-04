@@ -2,20 +2,20 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const page = urlParams.get("page") || 1;
-const limit = urlParams.get("limit") || 10;
+const limit = urlParams.get("limit") || 100;
 const numberOfPages = Math.ceil(count / limit);
 const pagination = $(".pagination");
 const pageLeft = $('#pageLeft');
 const pageRight = $('#pageRight');
 if (page > 1) {
   pageLeft.removeClass("disabled");
-  pageLeft.attr("href", `/beneficiaries?page=${page - 1}&limit=${limit}`);
+  pageLeft.attr("href", `/beneficiaries?page=${parseInt(page) - 1}&limit=${limit}`);
 } else {
   pageLeft.addClass("disabled");
 }
 if (page < numberOfPages) {
   pageRight.removeClass("disabled");
-  pageRight.attr("href", `/beneficiaries?page=${page + 1}&limit=${limit}`);
+  pageRight.attr("href", `/beneficiaries?page=${parseInt(page) + 1}&limit=${limit}`);
 } else {
   pageRight.addClass("disabled");
 }
