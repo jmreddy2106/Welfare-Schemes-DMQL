@@ -82,7 +82,7 @@ router.get("/search", (req, res) => {
 });
 
 router.get("/addUser", (req, res) => {
-  res.render("addUser", {
+  res.render("adduser", {
     title: "Add User",
   });
 });
