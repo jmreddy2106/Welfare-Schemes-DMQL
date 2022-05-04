@@ -61,6 +61,26 @@ router.get("/citizens", (req, res) => {
   });
 });
 
+router.get("/search", (req, res) => {
+  // Get the limit and offset from the query string
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const page = req.query.page ? (req.query.page - 1) * limit : 0;
+  const query = req.query.query;
+
+  // Get the citizens from the database
+  Promise.all([
+    citizensController.searchCitizens(query, limit, page),
+    citizensController.countSearchedCitizens(query),
+  ]).then((results) => {
+    const [citizens, count] = results;
+    res.render("citizens", {
+      title: `Search results for "${query}"`,
+      citizens,
+      count: count[0].count,
+    });
+  });
+});
+
 router.get("/addUser", (req, res) => {
   res.render("addUser", {
     title: "Add User",

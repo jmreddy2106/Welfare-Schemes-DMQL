@@ -1,8 +1,7 @@
 const db = require("../models");
 const citizens = db.citizens;
-const {QueryTypes} = require('sequelize');
+const { QueryTypes } = require("sequelize");
 const { sequelize } = require("../models");
-
 
 // Retrieve all citizens from the database. Limit the number of citizens returned to 10.
 exports.findXCitizens = (limit, offset) => {
@@ -12,7 +11,7 @@ exports.findXCitizens = (limit, offset) => {
             on c.village_id = v.village_id
             order by citizen_id limit ${limit} offset ${offset};`;
 
-  return sequelize.query(query, { type: QueryTypes.SELECT })
+  return sequelize.query(query, { type: QueryTypes.SELECT });
 };
 
 exports.getBeneficiaries = (limit, offset) => {
@@ -41,50 +40,44 @@ exports.getBeneficiaries = (limit, offset) => {
   left join nregs_transaction nt on (nm.nregs_id=nt.nregs_id)
   left join hospital_transaction ht on (cs.citizen_id = ht.citizen_id)
   group by c.citizen_id,c.first_name , c.last_name ,c.gender 
-  ,cs.job_type ,pension_schem,education_schem,agri_schem, lpg_schem,Nregs_schem,Health_schem limit ${limit} offset ${offset};`
+  ,cs.job_type ,pension_schem,education_schem,agri_schem, lpg_schem,Nregs_schem,Health_schem limit ${limit} offset ${offset};`;
 
-  return sequelize.query(query, { type: QueryTypes.SELECT })
-
-} 
+  return sequelize.query(query, { type: QueryTypes.SELECT });
+};
 
 exports.getCountOfCitizens = () => {
   const query = `select count(*) as count from citizens;`;
-  return sequelize.query(query, { type: QueryTypes.SELECT })
-}
-
-
-exports.deleteCitizenbyId = (citizen_id) =>{
-  return citizens.destroy({
-    where: { citizen_id }
-  })
+  return sequelize.query(query, { type: QueryTypes.SELECT });
 };
 
-exports.editCitizen = (citizen_id, address, mobile_num, dob, marital_status) => {
-  return citizens.update({
-    address, mobile_num, dob, marital_status
-  }, {
-    where: {
-      citizen_id
-    }
-  });
+exports.deleteCitizenbyId = (citizen_id) => {
+  const query = `delete from citizens where citizen_id = ${citizen_id};`;
+  return sequelize.query(query, { type: QueryTypes.DELETE });
+};
+
+exports.editCitizen = (
+  citizen_id,
+  address,
+  mobile_num,
+  dob,
+  marital_status
+) => {
+  const query = `update citizens set address = '${address}', mobile_num = '${mobile_num}', dob = '${dob}', marital_status = '${marital_status}' where citizen_id = ${citizen_id};`;
+  return sequelize.query(query, { type: QueryTypes.UPDATE });
 };
 
 //Check Citizen exists or not
 exports.checkCitizenId = (citizen_id) => {
-  return citizens.findOne({
-    where: {
-      citizen_id
-    }
-  }).then(
-    citizen_id => {
+  const query = `select * from citizens where citizen_id = ${citizen_id};`;
+  return sequelize
+    .query(query, { type: QueryTypes.SELECT })
+    .then((citizen_id) => {
       if (citizen_id) {
         return true;
       }
       return false;
-    }
-  )
-}
-
+    });
+};
 
 // Get total number of male and female citizens
 exports.findGenderDistribution = () => {
@@ -98,17 +91,53 @@ exports.findGenderDistribution = () => {
   return citizens.findAll({
     group: ["gender"],
     attributes: ["gender", [db.sequelize.fn("COUNT", "gender"), "genderCount"]],
-    raw: true
+    raw: true,
   });
 };
-
 
 // add new citizen
-exports.addNewCitizen = (citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id) => {
+exports.addNewCitizen = (
+  citizen_id,
+  first_name,
+  last_name,
+  address,
+  mobile_num,
+  dob,
+  gender,
+  marital_status,
+  disabled,
+  disbaled_percentage,
+  caste,
+  village_id
+) => {
   return citizens.create({
-    citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id
+    citizen_id,
+    first_name,
+    last_name,
+    address,
+    mobile_num,
+    dob,
+    gender,
+    marital_status,
+    disabled,
+    disbaled_percentage,
+    caste,
+    village_id,
   });
 };
 
+exports.searchCitizens = (query, limit, offset) => {
+  const searchQuery = `SELECT * FROM citizens JOIN village_master on 
+  citizens.village_id = village_master.village_id
+  WHERE  to_tsvector(f_concat_ws(' ', first_name, last_name))
+      @@ plainto_tsquery('${query}') limit ${limit} offset ${offset};`;
+  return sequelize.query(searchQuery, { type: QueryTypes.SELECT });
+}
 
-
+exports.countSearchedCitizens = (query) => {
+  const searchQuery = `SELECT count(*) FROM citizens JOIN village_master 
+  on citizens.village_id = village_master.village_id
+  WHERE  to_tsvector(f_concat_ws(' ', first_name, last_name))
+      @@ plainto_tsquery('${query}');`;
+  return sequelize.query(searchQuery, { type: QueryTypes.SELECT });
+}

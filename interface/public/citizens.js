@@ -12,25 +12,26 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const page = urlParams.get("page") || 1;
 const limit = urlParams.get("limit") || 10;
+const query = urlParams.get("query") || "";
 const numberOfPages = Math.ceil(count / limit);
 const pagination = $(".pagination");
 const pageLeft = $('#pageLeft');
 const pageRight = $('#pageRight');
 if (page > 1) {
   pageLeft.removeClass("disabled");
-  pageLeft.attr("href", `/citizens?page=${parseInt(page) - 1}&limit=${limit}`);
+  pageLeft.attr("href", `${window.location.pathname}?page=${parseInt(page) - 1}&limit=${limit}&query=${query}`);
 } else {
   pageLeft.addClass("disabled");
 }
 if (page < numberOfPages) {
   pageRight.removeClass("disabled");
-  pageRight.attr("href", `/citizens?page=${parseInt(page) + 1}&limit=${limit}`);
+  pageRight.attr("href", `${window.location.pathname}?page=${parseInt(page) + 1}&limit=${limit}&query=${query}`);
 } else {
   pageRight.addClass("disabled");
 }
 
 function redirectToLimit(limit) {
-  window.location.href = `/citizens?page=1&limit=${limit}`;
+  window.location.href = `${window.location.pathname}?page=1&limit=${limit}&query=${query}`;
 }
 
 addPageNumbers(numberOfPages);
@@ -49,7 +50,7 @@ function addPageNumbers(numberOfPages) {
     for (let i = startingPoint; i < startingPoint + 5; i++) {
       const linkElement = document.createElement("a");
       linkElement.innerHTML = i;
-      linkElement.setAttribute("href", `/citizens?page=${i}&limit=${limit}`);
+      linkElement.setAttribute("href", `${window.location.pathname}?page=${i}&limit=${limit}&query=${query}`);
       linkElement.setAttribute("id", `page${i}`);
       linkElement.classList.add("item");
       pageRight.before(linkElement);
@@ -64,7 +65,7 @@ function addPageNumbers(numberOfPages) {
     if (page > 3) {
       const firstPage = document.createElement("a");
       firstPage.innerHTML = 1;
-      firstPage.setAttribute("href", `/citizens?page=1&limit=${limit}`);
+      firstPage.setAttribute("href", `${window.location.pathname}?page=1&limit=${limit}&query=${query}`);
       firstPage.setAttribute("id", `page1`);
       firstPage.classList.add("item");
       pageLeft.after(dots);
@@ -75,7 +76,7 @@ function addPageNumbers(numberOfPages) {
     if (page != numberOfPages) {
       const lastPage = document.createElement("a");
       lastPage.innerHTML = numberOfPages;
-      lastPage.setAttribute("href", `/citizens?page=${numberOfPages}&limit=${limit}`);
+      lastPage.setAttribute("href", `${window.location.pathname}?page=${numberOfPages}&limit=${limit}&query=${query}`);
       lastPage.classList.add("item");
       pageRight.before(lastPage);
     }
@@ -85,14 +86,16 @@ function addPageNumbers(numberOfPages) {
       // Insert before pageRight
       const linkElement = document.createElement("a");
       linkElement.innerHTML = i;
-      linkElement.setAttribute("href", `/citizens?page=${i}&limit=${limit}`);
+      linkElement.setAttribute("href", `${window.location.pathname}?page=${i}&limit=${limit}&query=${query}`);
       linkElement.setAttribute("id", `page${i}`);
       linkElement.classList.add("item");
       pageRight.before(linkElement);
     }
   }
-  const currentPageElement = document.getElementById(`page${page}`);
-  currentPageElement.classList.add("active");
+  const currentPageElement = document.getElementById(`page${page}&query=${query}`);
+  try {
+    currentPageElement.classList.add("active");
+  } catch (error) {}
 }
 
 function editCitizensRecord(citizen) {
@@ -119,7 +122,7 @@ function editCitizen(event) {
     citizen_id: $("#citizen_id").html(),
   };
   $.ajax({
-    url: "/api/citizens/edit",
+    url: "/api${window.location.pathname}/edit",
     type: "POST",
     data: data,
     success: function (response) {
@@ -133,7 +136,7 @@ function editCitizen(event) {
 function deleteCitizenRecord(citizen) {
   citizen_id = JSON.parse(citizen).citizen_id;
   $.ajax({
-    url: "/api/citizens/delete",
+    url: "/api${window.location.pathname}/delete",
     type: "POST",
     data: { citizen_id },
     success: function (response) {

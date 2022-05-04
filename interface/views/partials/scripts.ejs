@@ -10,4 +10,12 @@
 <script src='https://cdn.plot.ly/plotly-2.11.1.min.js'></script>
 <script>
   $(".ui.dropdown").dropdown();
+  $(document).ready(function() {
+    // listen for return key press on search input
+    $("#searchInput").keyup(function(event) {
+      if (event.keyCode === 13 && $("#searchInput").val() !== "") {
+        route("/search?query=" + $("#searchInput").val());
+      }
+    });
+  });
 </script>
