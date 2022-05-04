@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const citizensController = require("../controllers/citizens.controller");
+const dashboardController = require('../controllers/dashboard.controller');
+const citizensController = require('../controllers/citizens.controller');
 const api = require('./api');
 const citizensAPI = require('./api/citizens');
 const geographyAPI = require('./api/geography');
@@ -12,11 +13,17 @@ router.use('/api/geography', geographyAPI);
 
 
 router.get('/', (req, res) => {
-    Promise.all([citizensController.findGenderDistribution()]).then(results => {
-        const [genderDistribution] = results;
+    Promise.all([dashboardController.genderDist(), dashboardController.ageDist(), dashboardController.casteDist(),
+    dashboardController.maritalDist(), dashboardController.disablePercentage(), dashboardController.citizensByDistrict()]).then(results => {
+        const [genderDist, ageDist, casteDist, maritalDist, disableDist, citizenDist] = results;
         res.render('index', {
             title: 'Home Page',
-            genderDistribution
+            genderDist,
+            ageDist,
+            casteDist,
+            maritalDist,
+            disableDist,
+            citizenDist
         });
     });
 });
@@ -44,6 +51,19 @@ router.get("/addUser", (req, res) => {
         });
     }
 );
+
+router.get("/beneficiaries", (req, res) => {
+    const limit = parseInt(req.query.limit, 10) || 100;
+    const page = req.query.page ? (req.query.page - 1) * limit : 0;
+    Promise.all([citizensController.getBeneficiaries(limit, page), citizensController.getCountOfCitizens()]).then(results => {
+        const [beneficiaries, count] = results;        
+        res.render('beneficiaries', {
+            title: 'Beneficiaries',
+            beneficiaries,
+            count: count[0].count,
+        });
+    });
+});
 
 
 // export the router

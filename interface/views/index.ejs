@@ -39,27 +39,24 @@
     </div>
     <%- include('partials/navbar') %>
     <div class="ui main container segment">
-      <div class="ui cards">
-        <div class="card">
-          <div class="content">
-            <div class="header">Citizens</div>
-            <div class="description">
-              <pre>
-                Gender Statistics:<br>
-                =====================<br>
-                Male: <%= genderDistribution[0].genderCount %><br>
-                Female: <%= genderDistribution[1].genderCount %><br>
-                ---------------------<br>
-                Total: <%= genderDistribution[0].genderCount + genderDistribution[1].genderCount %>
-              </pre>
-              Provides the details of all the citizens in the database
-            </div>
-          </div>
-          <div class="extra content">
-            <div class="ui basic green button" onclick="route('citizens')">
-              View Data
-            </div>
-          </div>
+      <div class="ui three column grid">
+        <div class="column">
+          <div class="ui cards" id="genderdist"></div>
+        </div>
+        <div class="column">
+          <div class="ui cards" id="agedist"></div>
+        </div>
+        <div class="column">
+          <div class="ui cards" id="castedist"></div>
+        </div>
+        <div class="column">
+          <div class="ui cards" id="maritaldist"></div>
+        </div>
+        <div class="column">
+          <div class="ui cards" id="disabledist"></div>
+        </div>
+        <div class="column">
+          <div class="ui cards" id="citizendist"></div>
         </div>
       </div>
     </div>
@@ -69,4 +66,183 @@
     $(".login.modal").modal("attach events", ".loginButton", "show");
   </script>
   <script src="/login.js"></script>
+
+  <script>
+    function generateColors(n) {
+      var colors = [];
+      for (var i = 0; i < n; i++) {
+        colors.push(
+          "rgb(" +
+            Math.floor(Math.random() * 256) +
+            "," +
+            Math.floor(Math.random() * 256) +
+            "," +
+            Math.floor(Math.random() * 256) +
+            ")"
+        );
+      }
+      return colors;
+    }
+
+    const genderDist = JSON.parse(`<%- JSON.stringify(genderDist) %>`);
+
+    var trace1 = {
+      x: ["Male", "Female"],
+      y: [genderDist[0].gender_dist, genderDist[1].gender_dist],
+      type: "bar",
+      marker: {
+        color: generateColors(2),
+      },
+    };
+    var data = [trace1];
+    var layout = {
+      title: "Gender Distibution of all Citizens",
+      font: { size: 12 },
+    };
+    var config = { responsive: true };
+    Plotly.newPlot("genderdist", data, layout, config);
+
+    const ageDist = JSON.parse(`<%- JSON.stringify(ageDist) %>`);
+
+    var x = [];
+    var y = [];
+    for (var i = 0; i < ageDist.length; i++) {
+      x.push(ageDist[i].age_dist);
+      y.push(ageDist[i].sum);
+    }
+    var trace2 = {
+      x: x,
+      y: y,
+      type: "bar",
+      marker: {
+        color: generateColors(x.length),
+      },
+    };
+    var data = [trace2];
+    var layout = {
+      title: "Age Distibution of all Citizens",
+      font: { size: 12 },
+    };
+    var config = { responsive: true };
+    Plotly.newPlot("agedist", data, layout, config);
+
+    // caste dist
+    const casteDist = JSON.parse(`<%- JSON.stringify(casteDist) %>`);
+
+    var x = [];
+    var y = [];
+    for (var i = 0; i < casteDist.length; i++) {
+      x.push(casteDist[i].caste);
+      y.push(casteDist[i].caste_dist);
+    }
+    // plot pie chart
+    var trace3 = {
+      labels: x,
+      values: y,
+      type: "pie",
+      marker: {
+        color: generateColors(x.length),
+      },
+    };
+    var data = [trace3];
+    var layout = {
+      title: "Caste Distibution of all Citizens",
+      font: { size: 12 },
+    };
+    var config = { responsive: true };
+    Plotly.newPlot("castedist", data, layout, config);
+
+    // marital dist
+    const maritalDist = JSON.parse(`<%- JSON.stringify(maritalDist) %>`);
+
+    
+    var x = [];
+    var y = [];
+    for (var i = 0; i < maritalDist.length; i++) {
+      x.push(maritalDist[i].marital_status);
+      y.push(maritalDist[i].marital_dist);
+    }
+    // plot pie chart
+    var trace4 = {
+      labels: x,
+      values: y,
+      type: "pie",
+      marker: {
+        color: generateColors(x.length),
+      },
+    };
+    var data = [trace4];
+    var layout = {
+      title: "Marital Status Distibution of all Citizens",
+      font: { size: 12 },
+    };
+    var config = { responsive: true };
+    Plotly.newPlot("maritaldist", data, layout, config);
+
+    // disabled dist
+    const disabledDist = JSON.parse(`<%- JSON.stringify(disableDist) %>`);
+
+    var x = [];
+    var y = [];
+    for (var i = 0; i < disabledDist.length; i++) {
+      x.push(disabledDist[i].disable_count_perc_dist);
+      y.push(disabledDist[i].disbaled_percentage);
+    }
+    // plot Donut Chart
+    var trace5 = {
+      labels: y,
+      values: x,
+      type: "pie",
+      marker: {
+        color: generateColors(x.length),
+      },
+      hole: 0.4,
+    };
+    var data = [trace5];
+    var layout = {
+      title: "Disabled Distibution of all Citizens",
+      font: { size: 12 },
+    };
+    var config = { responsive: true };
+    Plotly.newPlot("disabledist", data, layout, config);
+
+    // citizen dist
+
+    function generateBubbleSize(n) {
+      var sizes = [];
+      for (var i = 0; i < n.length; i++) {
+        sizes.push(Math.random() * 100);
+      }
+      return sizes;
+    }
+
+    const citizenDist = JSON.parse(`<%- JSON.stringify(citizenDist) %>`);
+
+    var x = [];
+    var y = [];
+    for (var i = 0; i < citizenDist.length; i++) {
+      x.push(citizenDist[i].district_name);
+      y.push(citizenDist[i].district_dist);
+    }
+
+    // plot bubble chart 
+    var trace6 = {
+      x: x,
+      y: y,
+      mode: "markers",
+      marker: {
+        color: generateColors(x.length),
+        size: generateBubbleSize(y),
+      },
+    };
+    var data = [trace6];
+    var layout = {
+      title: "Citizen Distibution of all Citizens",
+      font: { size: 12 },
+    };
+    var config = { responsive: true };
+    Plotly.newPlot("citizendist", data, layout, config);
+
+
+  </script>
 </html>

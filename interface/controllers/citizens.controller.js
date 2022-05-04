@@ -15,6 +15,38 @@ exports.findXCitizens = (limit, offset) => {
   return sequelize.query(query, { type: QueryTypes.SELECT })
 };
 
+exports.getBeneficiaries = (limit, offset) => {
+  const query = `select distinct c.citizen_id,c.first_name , c.last_name ,c.gender ,cs.job_type ,
+  case when pm.schem_name is not null then 'Benifitted with Pension ' else 'Na' end as pension_schem, 
+  coalesce (sum (pt.pen_amount),0) as pension_amount_benifetted ,
+  case when em.citizen_id is not null then 'Offered Education schem' else 'NA' end as education_schem ,
+  coalesce (sum(em.amount) ,0) as education_amount_benifetted,
+  case when at2.crop_seaon  is not null then 'Benifitted with agriculture schem' else 'Na' end as agri_schem,
+  coalesce (sum(at2.amt_remitted) ,0) as agri_amount_benifetted,
+  case when lt.citizen_id  is not null then 'Benifitted with LPG ' else 'Na' end as lpg_schem,
+  case when nm.nregs_id is not null then 'Benifitted with Nregs' else 'Na' end as Nregs_schem,
+  coalesce (sum(nt.amount_remitted) ,0) as nregs_amount_benifetted,
+  case when ht.citizen_id  is not  null then 'Benifitted with health schem' else 'Na' end as Health_schem,
+  coalesce (sum(ht.amount_charged), 0) as health_amount_benifitted,
+  coalesce (sum (pt.pen_amount),0)+coalesce (sum(em.amount) ,0)+
+  coalesce (sum(at2.amt_remitted) ,0)+coalesce (sum(lt.amount_remitted) ,0)+ coalesce (sum(ht.amount_charged), 0) as total_amount_benifitted
+  from citizens c 
+  left join civil_supplies cs ON (c.citizen_id = cs.citizen_id)
+  left join pension_transaction pt on (cs.citizen_id = pt.citizen_id)
+  left join pension_master pm  on (pt.pension_schem_id = pm.pension_schem_id)
+  left join education_master em on (em.citizen_id = cs.citizen_id )
+  left join agri_trasaction at2 on (at2.citizen_id=cs.citizen_id)
+  left join lpg_transaction lt on (lt.citizen_id= c.citizen_id)
+  left join nregs_master nm on (nm.citizen_id = cs.citizen_id)
+  left join nregs_transaction nt on (nm.nregs_id=nt.nregs_id)
+  left join hospital_transaction ht on (cs.citizen_id = ht.citizen_id)
+  group by c.citizen_id,c.first_name , c.last_name ,c.gender 
+  ,cs.job_type ,pension_schem,education_schem,agri_schem, lpg_schem,Nregs_schem,Health_schem limit ${limit} offset ${offset};`
+
+  return sequelize.query(query, { type: QueryTypes.SELECT })
+
+} 
+
 exports.getCountOfCitizens = () => {
   const query = `select count(*) as count from citizens;`;
   return sequelize.query(query, { type: QueryTypes.SELECT })
@@ -77,3 +109,6 @@ exports.addNewCitizen = (citizen_id, first_name, last_name, address, mobile_num,
     citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id
   });
 };
+
+
+

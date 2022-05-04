@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+    <style>
+      .ui.menu {
+        margin-top: 0;
+      }
+      .scrollY {
+        max-height: calc(100vh - 8rem);
+        margin-top: 1rem;
+        overflow-y: scroll;
+      }
+      .ui.table thead tr:first-child > th {
+        position: sticky !important;
+        top: 0;
+        z-index: 2;
+      }
+      .ui.table tfoot tr:first-child > th {
+        position: sticky !important;
+        bottom: 0;
+        z-index: 2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <%- include('partials/navbar') %>
+
+    <!-- Drop down for selecting limit -->
+
+    <div class="ui container">
+      <div class="ui floating labeled icon dropdown button">
+        <i class="list icon"></i>
+        <span class="text">Items</span>
+        <div class="menu">
+          <div class="item" onclick="redirectToLimit(100)">100</div>
+          <div class="item" onclick="redirectToLimit(250)">250</div>
+          <div class="item" onclick="redirectToLimit(500)">500</div>
+          <div class="item" onclick="redirectToLimit(1000)">1000</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scrollY">
+      <table class="ui selectable table">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Job type</th>
+            <th>Pension Scheme</th>
+            <th>Pension Amount</th>
+            <th>Education Scheme</th>
+            <th>Education Amount benifetted</th>
+            <th>Agriculture Scheme</th>
+            <th>Agriculture Amount benifetted</th>
+            <th>LPG Scheme</th>
+            <th>NREGS Scheme</th>
+            <th>NREGS Amount benifetted</th>
+            <th>Health scheme</th>
+            <th>Health Amount Benifitted</th>
+            <th>Total Amount Benifitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < beneficiaries.length; i++) { %>
+          <tr>
+            <td><%= beneficiaries[i].first_name %></td>
+            <td><%= beneficiaries[i].last_name %></td>
+            <td><%= beneficiaries[i].gender %></td>
+            <td><%= beneficiaries[i].job_type %></td>
+            <td><%= beneficiaries[i].pension_schem %></td>
+            <td><%= beneficiaries[i].pension_amount_benifetted %></td>
+            <td><%= beneficiaries[i].education_schem %></td>
+            <td><%= beneficiaries[i].education_amount_benifetted %></td>
+            <td><%= beneficiaries[i].agri_schem %></td>
+            <td><%= beneficiaries[i].agri_amount_benifetted %></td>
+            <td><%= beneficiaries[i].lpg_schem %></td>
+            <td><%= beneficiaries[i].nregs_schem %></td>
+            <td><%= beneficiaries[i].nregs_amount_benifetted %></td>
+            <td><%= beneficiaries[i].health_schem %></td>
+            <td><%= beneficiaries[i].health_amount_benifitted %></td>
+            <td><%= beneficiaries[i].total_amount_benifitted %></td>
+          </tr>
+          <% } %>
+        </tbody>
+        <!-- Display a pagination -->
+        <tfoot>
+          <tr>
+            <th colspan="16">
+              <div class="ui right floated pagination menu">
+                <a class="icon item" id="pageLeft">
+                  <i class="left chevron disabled icon"></i>
+                </a>
+
+                <a class="icon item" id="pageRight">
+                  <i class="right chevron disabled icon"></i>
+                </a>
+              </div>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </body>
+  <%- include('partials/scripts') %>
+  <script>
+    const count = "<%= count %>";
+  </script>
+  <script src="/beneficiaries.js"></script>
+</html>
