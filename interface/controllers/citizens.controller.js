@@ -5,23 +5,26 @@ const { sequelize } = require("../models");
 
 
 // Retrieve all citizens from the database. Limit the number of citizens returned to 10.
-exports.findXCitizens = () => {
-  query = `select c.citizen_id, c.first_name, c.last_name, c.address, c.mobile_num, c.dob, c.gender, c.marital_status, c.village_id, v.village_name  
+exports.findXCitizens = (limit, offset) => {
+  const query = `select c.citizen_id, c.first_name, c.last_name, c.address, c.mobile_num, c.dob, c.gender, c.marital_status, c.village_id, v.village_name  
             from citizens c
             join village_master v
             on c.village_id = v.village_id
-            order by citizen_id limit 10;`;
+            order by citizen_id limit ${limit} offset ${offset};`;
 
   return sequelize.query(query, { type: QueryTypes.SELECT })
 };
 
+exports.getCountOfCitizens = () => {
+  const query = `select count(*) as count from citizens;`;
+  return sequelize.query(query, { type: QueryTypes.SELECT })
+}
+
 
 exports.deleteCitizenbyId = (citizen_id) =>{
-
   return citizens.destroy({
     where: { citizen_id }
   })
-
 };
 
 exports.editCitizen = (citizen_id, address, mobile_num, dob, marital_status) => {

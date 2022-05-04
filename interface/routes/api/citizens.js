@@ -3,6 +3,12 @@ const router = express.Router();
 
 const citizensController = require("../../controllers/citizens.controller");
 
+router.get('/count', (req, res) => {
+  citizensController.getCountOfCitizens().then(count => {
+    res.json({ count });
+  });
+});
+
 router.post("/edit", (req, res) => {
   const { citizen_id, address, mobile_num, dob, marital_status } = req.body;
   if (!citizen_id || !address || !mobile_num || !dob || !marital_status) {

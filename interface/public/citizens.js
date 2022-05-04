@@ -7,6 +7,93 @@ $(".ui.form").form({
   },
 });
 
+// Get current page and limit query parameter
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const page = urlParams.get("page") || 1;
+const limit = urlParams.get("limit") || 10;
+const numberOfPages = Math.ceil(count / limit);
+const pagination = $(".pagination");
+const pageLeft = $('#pageLeft');
+const pageRight = $('#pageRight');
+if (page > 1) {
+  pageLeft.removeClass("disabled");
+  pageLeft.attr("href", `/citizens?page=${page - 1}&limit=${limit}`);
+} else {
+  pageLeft.addClass("disabled");
+}
+if (page < numberOfPages) {
+  pageRight.removeClass("disabled");
+  pageRight.attr("href", `/citizens?page=${page + 1}&limit=${limit}`);
+} else {
+  pageRight.addClass("disabled");
+}
+
+function redirectToLimit(limit) {
+  window.location.href = `/citizens?page=1&limit=${limit}`;
+}
+
+addPageNumbers(numberOfPages);
+
+function addPageNumbers(numberOfPages) {
+  // Add page numbers from current page to 2 pages before and 2 pages after, if there are more than 5 pages
+  if (numberOfPages > 5) {
+    let startingPoint = page - 2;
+    if (page < 3) {
+      startingPoint = 1;
+    } else if (page > numberOfPages - 2) {
+      startingPoint = numberOfPages - 4;
+    } else {
+      startingPoint = page - 2;
+    }
+    for (let i = startingPoint; i < startingPoint + 5; i++) {
+      const linkElement = document.createElement("a");
+      linkElement.innerHTML = i;
+      linkElement.setAttribute("href", `/citizens?page=${i}&limit=${limit}`);
+      linkElement.setAttribute("id", `page${i}`);
+      linkElement.classList.add("item");
+      pageRight.before(linkElement);
+    }
+      // add dots
+    const dots = document.createElement("a");
+    dots.innerHTML = "...";
+    dots.classList.add("item");
+    pageRight.before(dots);
+
+    // add first page if page > 3
+    if (page > 3) {
+      const firstPage = document.createElement("a");
+      firstPage.innerHTML = 1;
+      firstPage.setAttribute("href", `/citizens?page=1&limit=${limit}`);
+      firstPage.setAttribute("id", `page1`);
+      firstPage.classList.add("item");
+      pageRight.before(firstPage);
+    }
+
+    // add last page
+    if (page != numberOfPages) {
+      const lastPage = document.createElement("a");
+      lastPage.innerHTML = numberOfPages;
+      lastPage.setAttribute("href", `/citizens?page=${numberOfPages}&limit=${limit}`);
+      lastPage.classList.add("item");
+      pageRight.before(lastPage);
+    }
+  } else {
+    // add page numbers
+    for (let i = 1; i <= numberOfPages; i++) {
+      // Insert before pageRight
+      const linkElement = document.createElement("a");
+      linkElement.innerHTML = i;
+      linkElement.setAttribute("href", `/citizens?page=${i}&limit=${limit}`);
+      linkElement.setAttribute("id", `page${i}`);
+      linkElement.classList.add("item");
+      pageRight.before(linkElement);
+    }
+  }
+  const currentPageElement = document.getElementById(`page${page}`);
+  currentPageElement.classList.add("active");
+}
+
 function editCitizensRecord(citizen) {
   citizen = JSON.parse(citizen);
   $(".edit.modal").modal("show");
@@ -14,7 +101,7 @@ function editCitizensRecord(citizen) {
   $("#mobile_number").val(citizen.mobile_num);
   $("#dob").val(citizen.dob);
   $("#marital_status").val(citizen.marital_status);
-  $('#marital_status').dropdown('set selected', citizen.marital_status);
+  $("#marital_status").dropdown("set selected", citizen.marital_status);
   $("#citizen_id").html(citizen.citizen_id);
 }
 
@@ -51,10 +138,6 @@ function deleteCitizenRecord(citizen) {
     success: function (response) {
       console.log(response);
       location.reload();
-    }
+    },
   });
-
-  
 }
-
-

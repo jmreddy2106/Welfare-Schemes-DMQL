@@ -22,11 +22,17 @@ router.get('/', (req, res) => {
 });
 
 router.get("/citizens", (req, res) => {
+    // Get the limit and offset from the query string
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const page = req.query.page ? (req.query.page - 1) * limit : 0;
+
     // Get the citizens from the database
-    citizensController.findXCitizens().then(citizens => {
-        res.render("citizens", {
-            citizens: citizens,
-            title: "Citizens Data"
+    Promise.all([citizensController.findXCitizens(limit, page), citizensController.getCountOfCitizens()]).then(results => {
+        const [citizens, count] = results;
+        res.render('citizens', {
+            title: 'Citizens',
+            citizens,
+            count: count[0].count,
         });
     });
 });
