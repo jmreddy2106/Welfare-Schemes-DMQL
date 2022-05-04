@@ -52,4 +52,29 @@ router.post('/validate', (req, res) => {
 });
 
 
+router.post('/addnewcitizen', (req, res) => {
+    const { citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id} = req.body;
+
+    if(!citizen_id && !first_name && !last_name && !address && !mobile_num && !dob && !gender && !marital_status && !disabled && !caste && !village_id){
+
+        res.status(400).json({ message: "Please fill in all fields" });
+
+    }else{
+        citizensController.addNewCitizen(citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id).then(() => {
+            res.status(200).json({ message: "Citizen added successfully" });
+        }).catch((err) => {
+            res.status(400).json({ message: err });
+        });
+    }
+
+});
+
+
+
+
+
+    
+
+
+
 module.exports = router;

@@ -66,3 +66,11 @@ exports.findGenderDistribution = () => {
     raw: true
   });
 };
+
+
+// add new citizen
+exports.addNewCitizen = (citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id) => {
+  return citizens.create({
+    citizen_id, first_name, last_name, address, mobile_num, dob, gender, marital_status, disabled, disbaled_percentage, caste, village_id
+  });
+};
