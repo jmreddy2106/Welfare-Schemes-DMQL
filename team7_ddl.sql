@@ -1,3 +1,128 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.2
+-- Dumped by pg_dump version 14.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: f_concat_ws(text, text[]); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.f_concat_ws(text, VARIADIC text[]) RETURNS text
+    LANGUAGE sql IMMUTABLE
+    AS $_$SELECT array_to_string($2, $1)$_$;
+
+
+ALTER FUNCTION public.f_concat_ws(text, VARIADIC text[]) OWNER TO postgres;
+
+--
+-- Name: getaggriculturedetails(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.getaggriculturedetails() RETURNS TABLE(first_name character varying, last_name character varying, amount_remitted numeric, crop character varying, disbursed_date date)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+     RETURN QUERY ( SELECT cs.first_name, cs.last_name, agt.amt_remitted, agt.crop_seaon, agt.date_of_disbursed
+				 	FROM agri_trasaction agt
+   					join citizens cs on cs.citizen_id = agt.citizen_id);
+END; 
+$$;
+
+
+ALTER FUNCTION public.getaggriculturedetails() OWNER TO postgres;
+
+--
+-- Name: gethospitaldetails(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.gethospitaldetails() RETURNS TABLE(first_name character varying, last_name character varying, disease_category character varying, disease_sub_category character varying, amount_charged numeric)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+     RETURN QUERY ( SELECT cs.first_name, cs.last_name, ht.disease_category, ht.disease_sub_category, ht.amount_charged
+				 	FROM hospital_transaction ht
+   					join citizens cs on cs.citizen_id = ht.citizen_id);
+END; 
+$$;
+
+
+ALTER FUNCTION public.gethospitaldetails() OWNER TO postgres;
+
+--
+-- Name: getlpgdetails(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.getlpgdetails() RETURNS TABLE(first_name character varying, last_name character varying, booking_date date, amount_paid numeric, amount_remitted numeric)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+     RETURN QUERY ( SELECT cs.first_name, cs.last_name, lpgt.booking_date, lpgt.amount_paid, lpgt.amount_remitted
+				 	FROM lpg_transaction lpgt
+   					join citizens cs on cs.citizen_id = lpgt.citizen_id
+   					join village_master vm on cs.village_id = vm.village_id);
+END; 
+$$;
+
+
+ALTER FUNCTION public.getlpgdetails() OWNER TO postgres;
+
+--
+-- Name: getnregsdetails(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.getnregsdetails() RETURNS TABLE(first_name character varying, last_name character varying, days_of_attended integer, amount_remitted numeric)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+     RETURN QUERY ( SELECT cs.first_name, cs.last_name, NREGS.days_of_attended, NREGS.amount_remitted
+				 	FROM nregs_transaction NREGS
+				   join nregs_master nm
+				   on nm.nregs_id = NREGS.nregs_id
+   					join citizens cs on cs.citizen_id = nm.citizen_id);
+END; 
+$$;
+
+
+ALTER FUNCTION public.getnregsdetails() OWNER TO postgres;
+
+--
+-- Name: getpensiondetails(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.getpensiondetails() RETURNS TABLE(first_name character varying, last_name character varying, pen_date_disbursment date, pen_amount numeric)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+     RETURN QUERY ( SELECT cs.first_name, cs.last_name, pt.pen_date_disbursment, pt.pen_amount
+				 	FROM pension_transaction pt
+   					join citizens cs on cs.citizen_id = pt.citizen_id);
+END; 
+$$;
+
+
+ALTER FUNCTION public.getpensiondetails() OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: agri_trasaction; Type: TABLE; Schema: public; Owner: postgres
+--
+
 CREATE TABLE public.agri_trasaction (
     aggri_id integer NOT NULL,
     citizen_id character varying(12) NOT NULL,
@@ -12,7 +137,6 @@ CREATE TABLE public.agri_trasaction (
 ALTER TABLE public.agri_trasaction OWNER TO postgres;
 
 --
--- TOC entry 216 (class 1259 OID 33000)
 -- Name: bank_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -28,7 +152,21 @@ CREATE TABLE public.bank_master (
 ALTER TABLE public.bank_master OWNER TO postgres;
 
 --
--- TOC entry 213 (class 1259 OID 32848)
+-- Name: bank_masters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.bank_masters (
+    bank_account integer NOT NULL,
+    ifsc_code character varying(12) NOT NULL,
+    bank_name character varying(100) NOT NULL,
+    branch_name character varying(50) NOT NULL,
+    citizen_id character varying(12) NOT NULL
+);
+
+
+ALTER TABLE public.bank_masters OWNER TO postgres;
+
+--
 -- Name: citizens; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -52,7 +190,6 @@ CREATE TABLE public.citizens (
 ALTER TABLE public.citizens OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 33090)
 -- Name: civil_supplies; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -70,7 +207,6 @@ CREATE TABLE public.civil_supplies (
 ALTER TABLE public.civil_supplies OWNER TO postgres;
 
 --
--- TOC entry 214 (class 1259 OID 32884)
 -- Name: dbt_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -85,7 +221,6 @@ CREATE TABLE public.dbt_master (
 ALTER TABLE public.dbt_master OWNER TO postgres;
 
 --
--- TOC entry 210 (class 1259 OID 32805)
 -- Name: district_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -99,7 +234,41 @@ CREATE TABLE public.district_master (
 ALTER TABLE public.district_master OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 33148)
+-- Name: district_masters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.district_masters (
+    district_id integer NOT NULL,
+    district_name character varying(155) NOT NULL,
+    state_id integer NOT NULL
+);
+
+
+ALTER TABLE public.district_masters OWNER TO postgres;
+
+--
+-- Name: district_masters_district_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.district_masters_district_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.district_masters_district_id_seq OWNER TO postgres;
+
+--
+-- Name: district_masters_district_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.district_masters_district_id_seq OWNED BY public.district_masters.district_id;
+
+
+--
 -- Name: education_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -116,7 +285,6 @@ CREATE TABLE public.education_master (
 ALTER TABLE public.education_master OWNER TO postgres;
 
 --
--- TOC entry 217 (class 1259 OID 33010)
 -- Name: hospital_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -130,7 +298,6 @@ CREATE TABLE public.hospital_master (
 ALTER TABLE public.hospital_master OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 33127)
 -- Name: hospital_transaction; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -147,7 +314,6 @@ CREATE TABLE public.hospital_transaction (
 ALTER TABLE public.hospital_transaction OWNER TO postgres;
 
 --
--- TOC entry 215 (class 1259 OID 32890)
 -- Name: lpg_transaction; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -164,7 +330,6 @@ CREATE TABLE public.lpg_transaction (
 ALTER TABLE public.lpg_transaction OWNER TO postgres;
 
 --
--- TOC entry 211 (class 1259 OID 32815)
 -- Name: mandal_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -178,7 +343,41 @@ CREATE TABLE public.mandal_master (
 ALTER TABLE public.mandal_master OWNER TO postgres;
 
 --
--- TOC entry 219 (class 1259 OID 33101)
+-- Name: mandal_masters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.mandal_masters (
+    mandal_id integer NOT NULL,
+    mandal_name character varying(155) NOT NULL,
+    district_id integer NOT NULL
+);
+
+
+ALTER TABLE public.mandal_masters OWNER TO postgres;
+
+--
+-- Name: mandal_masters_mandal_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.mandal_masters_mandal_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.mandal_masters_mandal_id_seq OWNER TO postgres;
+
+--
+-- Name: mandal_masters_mandal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.mandal_masters_mandal_id_seq OWNED BY public.mandal_masters.mandal_id;
+
+
+--
 -- Name: nregs_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -192,7 +391,6 @@ CREATE TABLE public.nregs_master (
 ALTER TABLE public.nregs_master OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 33116)
 -- Name: nregs_transaction; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -208,7 +406,6 @@ CREATE TABLE public.nregs_transaction (
 ALTER TABLE public.nregs_transaction OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 33180)
 -- Name: pension_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -222,7 +419,6 @@ CREATE TABLE public.pension_master (
 ALTER TABLE public.pension_master OWNER TO postgres;
 
 --
--- TOC entry 226 (class 1259 OID 33201)
 -- Name: pension_transaction; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -239,7 +435,6 @@ CREATE TABLE public.pension_transaction (
 ALTER TABLE public.pension_transaction OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 33143)
 -- Name: scholarship_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -253,7 +448,6 @@ CREATE TABLE public.scholarship_master (
 ALTER TABLE public.scholarship_master OWNER TO postgres;
 
 --
--- TOC entry 209 (class 1259 OID 32800)
 -- Name: state_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -266,7 +460,75 @@ CREATE TABLE public.state_master (
 ALTER TABLE public.state_master OWNER TO postgres;
 
 --
--- TOC entry 212 (class 1259 OID 32825)
+-- Name: state_masters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.state_masters (
+    state_id integer NOT NULL,
+    state_name character varying(155) NOT NULL
+);
+
+
+ALTER TABLE public.state_masters OWNER TO postgres;
+
+--
+-- Name: state_masters_state_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.state_masters_state_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.state_masters_state_id_seq OWNER TO postgres;
+
+--
+-- Name: state_masters_state_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.state_masters_state_id_seq OWNED BY public.state_masters.state_id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    user_id integer NOT NULL,
+    username character varying(155) NOT NULL,
+    password character varying(155) NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_user_id_seq OWNER TO postgres;
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
+
+
+--
 -- Name: village_master; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -280,7 +542,78 @@ CREATE TABLE public.village_master (
 ALTER TABLE public.village_master OWNER TO postgres;
 
 --
--- TOC entry 3269 (class 2606 OID 33169)
+-- Name: village_masters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.village_masters (
+    village_id integer NOT NULL,
+    village_name character varying(155) NOT NULL,
+    mandal_id integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.village_masters OWNER TO postgres;
+
+--
+-- Name: village_masters_village_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.village_masters_village_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.village_masters_village_id_seq OWNER TO postgres;
+
+--
+-- Name: village_masters_village_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.village_masters_village_id_seq OWNED BY public.village_masters.village_id;
+
+
+--
+-- Name: district_masters district_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.district_masters ALTER COLUMN district_id SET DEFAULT nextval('public.district_masters_district_id_seq'::regclass);
+
+
+--
+-- Name: mandal_masters mandal_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mandal_masters ALTER COLUMN mandal_id SET DEFAULT nextval('public.mandal_masters_mandal_id_seq'::regclass);
+
+
+--
+-- Name: state_masters state_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.state_masters ALTER COLUMN state_id SET DEFAULT nextval('public.state_masters_state_id_seq'::regclass);
+
+
+--
+-- Name: users user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.users_user_id_seq'::regclass);
+
+
+--
+-- Name: village_masters village_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.village_masters ALTER COLUMN village_id SET DEFAULT nextval('public.village_masters_village_id_seq'::regclass);
+
+
+--
 -- Name: agri_trasaction agri_trasaction_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -289,7 +622,6 @@ ALTER TABLE ONLY public.agri_trasaction
 
 
 --
--- TOC entry 3253 (class 2606 OID 33004)
 -- Name: bank_master bank_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -298,7 +630,14 @@ ALTER TABLE ONLY public.bank_master
 
 
 --
--- TOC entry 3247 (class 2606 OID 32855)
+-- Name: bank_masters bank_masters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bank_masters
+    ADD CONSTRAINT bank_masters_pkey PRIMARY KEY (bank_account);
+
+
+--
 -- Name: citizens citizens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -307,7 +646,6 @@ ALTER TABLE ONLY public.citizens
 
 
 --
--- TOC entry 3257 (class 2606 OID 33095)
 -- Name: civil_supplies civil_supplies_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -316,7 +654,6 @@ ALTER TABLE ONLY public.civil_supplies
 
 
 --
--- TOC entry 3249 (class 2606 OID 32889)
 -- Name: dbt_master dbt_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -325,7 +662,6 @@ ALTER TABLE ONLY public.dbt_master
 
 
 --
--- TOC entry 3241 (class 2606 OID 32809)
 -- Name: district_master district_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -334,7 +670,14 @@ ALTER TABLE ONLY public.district_master
 
 
 --
--- TOC entry 3267 (class 2606 OID 33152)
+-- Name: district_masters district_masters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.district_masters
+    ADD CONSTRAINT district_masters_pkey PRIMARY KEY (district_id);
+
+
+--
 -- Name: education_master education_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -343,7 +686,6 @@ ALTER TABLE ONLY public.education_master
 
 
 --
--- TOC entry 3255 (class 2606 OID 33014)
 -- Name: hospital_master hospital_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -352,7 +694,6 @@ ALTER TABLE ONLY public.hospital_master
 
 
 --
--- TOC entry 3263 (class 2606 OID 33131)
 -- Name: hospital_transaction hospital_transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -361,7 +702,6 @@ ALTER TABLE ONLY public.hospital_transaction
 
 
 --
--- TOC entry 3251 (class 2606 OID 32895)
 -- Name: lpg_transaction lpg_transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -370,7 +710,6 @@ ALTER TABLE ONLY public.lpg_transaction
 
 
 --
--- TOC entry 3243 (class 2606 OID 32819)
 -- Name: mandal_master mandal_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -379,7 +718,14 @@ ALTER TABLE ONLY public.mandal_master
 
 
 --
--- TOC entry 3259 (class 2606 OID 33105)
+-- Name: mandal_masters mandal_masters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mandal_masters
+    ADD CONSTRAINT mandal_masters_pkey PRIMARY KEY (mandal_id);
+
+
+--
 -- Name: nregs_master nregs_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -388,7 +734,6 @@ ALTER TABLE ONLY public.nregs_master
 
 
 --
--- TOC entry 3261 (class 2606 OID 33121)
 -- Name: nregs_transaction nregs_transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -397,7 +742,6 @@ ALTER TABLE ONLY public.nregs_transaction
 
 
 --
--- TOC entry 3271 (class 2606 OID 33184)
 -- Name: pension_master pension_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -406,7 +750,6 @@ ALTER TABLE ONLY public.pension_master
 
 
 --
--- TOC entry 3273 (class 2606 OID 33206)
 -- Name: pension_transaction pension_transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -415,7 +758,6 @@ ALTER TABLE ONLY public.pension_transaction
 
 
 --
--- TOC entry 3265 (class 2606 OID 33147)
 -- Name: scholarship_master scholarship_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -424,7 +766,6 @@ ALTER TABLE ONLY public.scholarship_master
 
 
 --
--- TOC entry 3239 (class 2606 OID 32804)
 -- Name: state_master state_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -433,7 +774,22 @@ ALTER TABLE ONLY public.state_master
 
 
 --
--- TOC entry 3245 (class 2606 OID 32829)
+-- Name: state_masters state_masters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.state_masters
+    ADD CONSTRAINT state_masters_pkey PRIMARY KEY (state_id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
+
+
+--
 -- Name: village_master village_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -442,7 +798,35 @@ ALTER TABLE ONLY public.village_master
 
 
 --
--- TOC entry 3289 (class 2606 OID 33170)
+-- Name: village_masters village_masters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.village_masters
+    ADD CONSTRAINT village_masters_pkey PRIMARY KEY (village_id);
+
+
+--
+-- Name: citizen_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX citizen_index ON public.citizens USING btree (citizen_id, village_id) INCLUDE (citizen_id, first_name, last_name, village_id);
+
+
+--
+-- Name: civil_supplies_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX civil_supplies_index ON public.civil_supplies USING btree (citizen_id) INCLUDE (citizen_id);
+
+
+--
+-- Name: nt_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX nt_index ON public.nregs_transaction USING btree (nregs_id);
+
+
+--
 -- Name: agri_trasaction agri_trasaction_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -451,7 +835,6 @@ ALTER TABLE ONLY public.agri_trasaction
 
 
 --
--- TOC entry 3290 (class 2606 OID 33175)
 -- Name: agri_trasaction agri_trasaction_dbt_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -460,7 +843,6 @@ ALTER TABLE ONLY public.agri_trasaction
 
 
 --
--- TOC entry 3280 (class 2606 OID 33005)
 -- Name: bank_master bank_master_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -469,7 +851,14 @@ ALTER TABLE ONLY public.bank_master
 
 
 --
--- TOC entry 3277 (class 2606 OID 32856)
+-- Name: bank_masters bank_masters_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bank_masters
+    ADD CONSTRAINT bank_masters_citizen_id_fkey FOREIGN KEY (citizen_id) REFERENCES public.citizens(citizen_id);
+
+
+--
 -- Name: citizens citizens_village_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -478,7 +867,6 @@ ALTER TABLE ONLY public.citizens
 
 
 --
--- TOC entry 3281 (class 2606 OID 33096)
 -- Name: civil_supplies civil_supplies_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -487,7 +875,6 @@ ALTER TABLE ONLY public.civil_supplies
 
 
 --
--- TOC entry 3274 (class 2606 OID 32810)
 -- Name: district_master district_master_state_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -496,7 +883,14 @@ ALTER TABLE ONLY public.district_master
 
 
 --
--- TOC entry 3287 (class 2606 OID 33153)
+-- Name: district_masters district_masters_state_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.district_masters
+    ADD CONSTRAINT district_masters_state_id_fkey FOREIGN KEY (state_id) REFERENCES public.state_master(state_id);
+
+
+--
 -- Name: education_master education_master_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -505,7 +899,6 @@ ALTER TABLE ONLY public.education_master
 
 
 --
--- TOC entry 3288 (class 2606 OID 33158)
 -- Name: education_master education_master_scholarship_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -514,7 +907,6 @@ ALTER TABLE ONLY public.education_master
 
 
 --
--- TOC entry 3286 (class 2606 OID 33137)
 -- Name: hospital_transaction hospital_transaction_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -523,7 +915,6 @@ ALTER TABLE ONLY public.hospital_transaction
 
 
 --
--- TOC entry 3285 (class 2606 OID 33132)
 -- Name: hospital_transaction hospital_transaction_hospital_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -532,7 +923,6 @@ ALTER TABLE ONLY public.hospital_transaction
 
 
 --
--- TOC entry 3279 (class 2606 OID 32901)
 -- Name: lpg_transaction lpg_transaction_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -541,7 +931,6 @@ ALTER TABLE ONLY public.lpg_transaction
 
 
 --
--- TOC entry 3278 (class 2606 OID 32896)
 -- Name: lpg_transaction lpg_transaction_dbt_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -550,7 +939,6 @@ ALTER TABLE ONLY public.lpg_transaction
 
 
 --
--- TOC entry 3275 (class 2606 OID 32820)
 -- Name: mandal_master mandal_master_district_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -559,7 +947,14 @@ ALTER TABLE ONLY public.mandal_master
 
 
 --
--- TOC entry 3283 (class 2606 OID 33111)
+-- Name: mandal_masters mandal_masters_district_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.mandal_masters
+    ADD CONSTRAINT mandal_masters_district_id_fkey FOREIGN KEY (district_id) REFERENCES public.district_master(district_id);
+
+
+--
 -- Name: nregs_master nregs_master_bdt_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -568,7 +963,6 @@ ALTER TABLE ONLY public.nregs_master
 
 
 --
--- TOC entry 3282 (class 2606 OID 33106)
 -- Name: nregs_master nregs_master_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -577,7 +971,6 @@ ALTER TABLE ONLY public.nregs_master
 
 
 --
--- TOC entry 3284 (class 2606 OID 33122)
 -- Name: nregs_transaction nregs_transaction_nregs_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -586,7 +979,6 @@ ALTER TABLE ONLY public.nregs_transaction
 
 
 --
--- TOC entry 3291 (class 2606 OID 33207)
 -- Name: pension_transaction pension_transaction_citizen_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -595,7 +987,6 @@ ALTER TABLE ONLY public.pension_transaction
 
 
 --
--- TOC entry 3292 (class 2606 OID 33212)
 -- Name: pension_transaction pension_transaction_pension_schem_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -604,7 +995,6 @@ ALTER TABLE ONLY public.pension_transaction
 
 
 --
--- TOC entry 3276 (class 2606 OID 32830)
 -- Name: village_master village_master_mandal_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -612,7 +1002,13 @@ ALTER TABLE ONLY public.village_master
     ADD CONSTRAINT village_master_mandal_id_fkey FOREIGN KEY (mandal_id) REFERENCES public.mandal_master(mandal_id) ON DELETE CASCADE;
 
 
--- Completed on 2022-03-22 00:11:09
+--
+-- Name: village_masters village_masters_mandal_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.village_masters
+    ADD CONSTRAINT village_masters_mandal_id_fkey FOREIGN KEY (mandal_id) REFERENCES public.mandal_master(mandal_id);
+
 
 --
 -- PostgreSQL database dump complete
