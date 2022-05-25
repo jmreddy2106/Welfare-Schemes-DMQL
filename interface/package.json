@@ -9,7 +9,7 @@
     "dev": "nodemon server.js"
   },
   "keywords": [],
-  "author": "Kumar Priyansh <bobbyskhs@gmail.com>",
+  "author": "Kumar Priyansh <bobbyskhs@gmail.com>, Jagan Mohan Reddy <jagan.reddy507@gmail.com>",
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "async": "^3.2.3",
